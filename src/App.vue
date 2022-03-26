@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <DesktopNavigation />
+    <DesktopNavigation v-if="!$vuetify.breakpoint.mdAndDown" />
     <v-content>
       <v-container fluid>
         <v-row class="fill-height">
@@ -22,8 +22,24 @@ export default {
   components: { DesktopNavigation },
   name: "App",
 
-  data: () => ({
-    //
-  }),
+  data: () => ({ isMobile: false }),
+
+  beforeDestroy() {
+    if (typeof window === "undefined") return;
+
+    window.removeEventListener("resize", this.onResize, { passive: true });
+  },
+
+  mounted() {
+    this.onResize();
+
+    window.addEventListener("resize", this.onResize, { passive: true });
+  },
+
+  methods: {
+    onResize() {
+      this.isMobile = window.innerWidth < 600;
+    },
+  },
 };
 </script>
