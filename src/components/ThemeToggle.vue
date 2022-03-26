@@ -10,7 +10,7 @@
         fab
         @click="darkMode"
       >
-        <v-icon class="mr-1">mdi-moon-waxing-crescent</v-icon>
+        <v-icon color="grey darken-4" class="mr-1">mdi-moon-waxing-crescent</v-icon>
       </v-btn>
       <span v-if="title" class="text--text pl-3">Modo Noturno</span>
     </div>
@@ -24,7 +24,7 @@
         fab
         @click="darkMode"
       >
-        <v-icon>mdi-white-balance-sunny</v-icon>
+        <v-icon color="yellow lighten-1">mdi-white-balance-sunny</v-icon>
       </v-btn>
       <span v-if="title" class="text--text pl-3">Modo Claro</span>
     </div>
