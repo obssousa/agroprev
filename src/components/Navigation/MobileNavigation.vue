@@ -1,22 +1,15 @@
 <template>
 <div>
     <v-app-bar
-      color="deep-purple accent-4"
-      dark
+      class="green darken-1" dark
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>My files</v-toolbar-title>
+      <v-toolbar-title>{{ $route.name }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-filter</v-icon>
-      </v-btn>
+      <ThemeToggle />
 
       <v-btn icon>
         <v-icon>mdi-dots-vertical</v-icon>
@@ -28,11 +21,12 @@
       absolute
       left
       temporary
-      class="green darken-1" >
+      class="green darken-1"
+      dark >
     <v-list dense nav rounded>
       <v-list-item-group
           v-model="group"
-          active-class="deep-purple--text text--accent-4"
+          active-class="deep-purple--text text--text"
         >
       <v-list-item
         v-for="item in items"
@@ -55,7 +49,6 @@
       <div class="d-flex flex-column align-center text-center p">
         <h5 class="text--text overline">Desenvolvido em:</h5>
         <v-img width="30%" src="@/assets/UFPA.png"></v-img>
-        <ThemeToggle class="pa-4" />
       </div>
     </template>
   </v-navigation-drawer>

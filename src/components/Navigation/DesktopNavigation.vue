@@ -21,7 +21,7 @@
       <div class="d-flex flex-column align-center text-center p">
         <h5 class="text--text overline">Desenvolvido em:</h5>
         <v-img width="30%" src="@/assets/UFPA.png"></v-img>
-        <ThemeToggle class="pa-4" />
+        <ThemeToggle title class="pa-4" />
       </div>
     </template>
   </v-navigation-drawer>

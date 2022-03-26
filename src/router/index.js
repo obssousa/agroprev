@@ -11,27 +11,27 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Inicio',
     component: HomeView
   },
   {
     path: '/about',
-    name: 'about',
+    name: 'Sobre',
     component: AboutView
   },
   {
     path: '/culture',
-    name: 'culture',
+    name: 'Cultura de Plantio',
     component: CultureView
   },
   {
     path: '/irrigation',
-    name: 'Irrigation',
+    name: 'Irrigação',
     component: IrrigationTimeView
   },
   {
     path: '/plantation',
-    name: 'plantation',
+    name: 'Plantação',
     component: PlantationInfoView
   }
 ]
