@@ -44,13 +44,6 @@
       </v-list-item>
       </v-list-item-group>
     </v-list>
-    <template v-slot:append>
-      <v-divider></v-divider>
-      <div class="d-flex flex-column align-center text-center p">
-        <h5 class="text--text overline">Desenvolvido em:</h5>
-        <v-img width="30%" src="@/assets/UFPA.png"></v-img>
-      </div>
-    </template>
   </v-navigation-drawer>
 </div>
 </template>

@@ -2,7 +2,7 @@
   <v-app>
     <DesktopNavigation v-if="!$vuetify.breakpoint.mdAndDown" />
     <MobileNavigation v-else />
-    <v-content>
+    <v-main>
       <v-container fluid>
         <v-row class="fill-height">
           <v-col>
@@ -12,7 +12,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
