@@ -14,17 +14,9 @@
           </v-btn>
           <v-toolbar-title>Cultura</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <v-btn
-              dark
-              text
-              @click="show = false"
-            >
-              Save
-            </v-btn>
-          </v-toolbar-items>
         </v-toolbar>
       <v-card>
+        <v-container>
         <v-text-field
           label="Procurar"
           :rules="rules"
@@ -37,6 +29,7 @@
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="dialog = false"> I accept </v-btn>
         </v-card-actions>
+        </v-container>
       </v-card>
     </v-dialog>
   </div>

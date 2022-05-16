@@ -1,6 +1,5 @@
 <template>
-<v-container>
-  <v-card class="card-parent">
+  <div class="text-center">
       <v-row dense>
        <v-col
           v-for="(item, i) in getCultures"
@@ -28,47 +27,29 @@
           </v-card>
         </v-col>
       </v-row>
-      <CultureForm v-model="showModal" />
-  </v-card>
-  <v-fab-transition>
-      <v-btn
-        fab
-        large
-        dark
-        bottom
-        left
-        class="v-btn--example"
-      >
-        <v-icon>{{ 'mdi-share-variant' }}</v-icon>
-      </v-btn>
-    </v-fab-transition>
-    </v-container>
+  </div>
 </template>
-
 <script>
-import CultureForm from '@/components/modal/CultureForm'
-import { mapGetters, mapActions } from 'vuex'
-  export default {
-    name: 'Home',
-    data: () => ({
-      showModal: false,
-      rules: [
-        value => !!value || 'Required.',
-        value => (value && value.length >= 3) || 'Min 3 characters',
-      ],
-    }),
-    components: {
-      CultureForm
-    },
-    computed: {
+import { mapGetters } from 'vuex'
+
+export default {
+  props: {
+     value: Boolean
+  },
+  computed: {
     ...mapGetters("cultures", [
         "getCultures"
-    ])
+    ]),
+    show: {
+      get () {
+        return this.value
+      },
+      set (value) {
+         this.$emit('input', value)
+      }
+    }
   },
-    methods: {
-      ...mapActions({
-      createCulture: 'cultures/createCulture'
-      }),
+  methods: {
       getColorByValue(coefficient) {
         if(coefficient <= 30)
           return '#FFEB3B';
@@ -88,27 +69,6 @@ import { mapGetters, mapActions } from 'vuex'
         if(coefficient <= 80)
           return '#BF360C';
       },
-      showCultureForm() {
-        this.showModal = true;
-      }
-    }
   }
+};
 </script>
-
-<style>
-  /* This is for documentation purposes and will not be needed in your application */
-  .v-btn--example {
-    right: 0;
-    bottom: 0;
-    position: absolute;
-    margin: 0 0 16px 16px;
-  }
-
-  .card-parent {
-    
-  }
-
-  .culture-card {
-    width: 300px;
-  }
-</style>

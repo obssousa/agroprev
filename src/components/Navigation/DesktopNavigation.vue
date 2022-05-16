@@ -37,7 +37,7 @@ export default {
         { title: "Inicio", icon: "mdi-view-dashboard", route: "/" },
         { title: "Culturas", icon: "mdi-forest", route: "/culture" },
         {
-          title: "Irrigação",
+          title: "Estimativa de Irrigação",
           icon: "mdi-sprinkler-variant",
           route: "/irrigation",
         },

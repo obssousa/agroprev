@@ -26,7 +26,7 @@ const routes = [
   },
   {
     path: '/irrigation',
-    name: 'Irrigação',
+    name: 'Estimativa de Irrigação',
     component: IrrigationTimeView
   },
   {
