@@ -136,6 +136,14 @@ import { mapGetters, mapActions } from "vuex";
 import PlantationTypes from "@/constants/irrigationType";
 
 export default {
+  name: "PlantationForm",
+  props: {
+    value: Boolean,
+    plantation: {
+      type: Object,
+      default: () => {},
+    }
+  },
   data() {
     return {
       title: "Cadastro de Novo Plantio",
@@ -207,9 +215,6 @@ export default {
       PlantationTypes,
     };
   },
-  props: {
-    value: Boolean,
-  },
   computed: {
     ...mapGetters("cultures", ["getCultures"]),
     show: {
@@ -221,25 +226,34 @@ export default {
       },
     },
   },
+  mounted() {
+    this.initialize();
+  },
   methods: {
     ...mapActions({
       createPlantation: "plantations/createPlantation",
     }),
+    initialize() {
+      this.plantingSystem[0].value = this.plantation.setor;
+      this.plantingSystem[1].value = this.plantation.culture;
+      this.plantingSystem[2].value = this.plantation.copeArea;
+      this.plantingDistance[0].value = this.plantation.betweenPlants;
+      this.plantingDistance[1].value = this.plantation.betweenLines;
+      this.irrigationSystem[0].value = this.plantation.emissors;
+      this.irrigationSystem[1].value = this.plantation.flow;
+      this.irrigationSystem[2].value = this.plantation.irrigationType;
+      this.irrigationSystem[3].value = this.plantation.efficiency;
+    },
     savePlantation() {
       let formData = {};
       let location = { latitude: this.locationData.marker.position.lat, longitude: this.locationData.marker.position.lng };
       let allData = this.plantingSystem.concat(this.plantingDistance, this.irrigationSystem);
-
-      console.log(allData);
-      console.log(location);
 
       allData.forEach((question) => {
         formData[question.id] = question.value;
       });
 
       formData.location = location;
-
-      console.log(formData);
 
       this.createPlantation(formData);
       this.$emit("close");

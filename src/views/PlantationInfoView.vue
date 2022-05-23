@@ -1,8 +1,8 @@
 <template>
-  <v-container>
+  <v-sheet>
     <v-card class="card-parent">
-      <PlantationTable />
-      <PlantationForm v-model="showModal" @close="showModal = false" />
+      <PlantationTable @editItem="editItem" @deleteItem="deleteItem" />
+      <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="showModal = false" />
     </v-card>
     <v-fab-transition>
       <v-btn
@@ -17,7 +17,7 @@
         <v-icon>{{ "mdi-plus" }}</v-icon>
       </v-btn>
     </v-fab-transition>
-  </v-container>
+  </v-sheet>
 </template>
 
 <script>
@@ -25,8 +25,9 @@ import PlantationForm from "@/components/modal/PlantationForm.vue";
 import PlantationTable from "@/components/tables/PlantationTable.vue";
 
 export default {
-  name: "Home",
+  name: "PlantationInfoView",
   data: () => ({
+    plantation: {},
     showModal: false,
   }),
   components: {
@@ -37,6 +38,14 @@ export default {
     showCultureForm() {
       this.showModal = true;
     },
+    editItem(item) {
+      this.plantation = item;
+      this.showModal = true;
+    },
+    deleteItem(item) {
+      this.plantation = item;
+      this.showModal = true;
+    }
   },
 };
 </script>

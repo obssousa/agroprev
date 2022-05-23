@@ -2,8 +2,9 @@
   <v-data-table
     :headers="headers"
     :items="getPlantations"
-    :expanded.sync="expanded"
     :item-key="itemKey"
+    :expanded.sync="expanded"
+    show-expand
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -19,56 +20,45 @@
         ></v-text-field>
       </v-toolbar>
     </template>
-    <template v-slot:[`item.emissors`]="{ item }">
-      <v-chip color="primary" dark>
-        {{ item.emissors }}
-      </v-chip>
-    </template>
-    <template v-slot:[`item.flow`]="{ item }">
-      <v-chip color="primary" dark>
-        {{ item.flow }}
-      </v-chip>
-    </template>
-    <template v-slot:[`item.irrigationType`]="{ item }">
-      <v-chip color="primary" dark>
-        {{ item.irrigationType }}
-      </v-chip>
-    </template>
-    <template v-slot:[`item.efficiency`]="{ item }">
-      <v-edit-dialog
-        :return-value.sync="item.efficiency"
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon
+        small
+        class="mr-2"
+        @click="editItem(item)"
       >
-        <v-chip color="primary" dark>
-          {{ item.efficiency }}
-        </v-chip>
-        <template v-slot:input>
-          <v-text-field
-            v-model="item.efficiency"
-            :rules="[max25chars]"
-            label="Edit"
-            single-line
-            counter
-          ></v-text-field>
-          <v-card-actions>
-            <v-btn color="primary" text> Cancelar </v-btn>
-
-            <v-btn @click="editPlantation(item)" rounded color="primary"> Salvar </v-btn>
-          </v-card-actions>
-        </template>
-      </v-edit-dialog>
+        mdi-pencil
+      </v-icon>
+      <v-icon
+        small
+        @click="deleteItem(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+    <template v-slot:expanded-item="{ headers, item }">
+      <td :colspan="headers.length">
+            <GmapMap
+              :center="getLocation(item.location)"
+              :zoom="8"
+              map-type-id="terrain"
+            >
+              <GmapMarker
+                :position="getLocation(item.location)"
+                :clickable="false"
+                :draggable="false"
+              />
+            </GmapMap>
+      </td>
     </template>
   </v-data-table>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "PlantationTable",
   data: () => ({
-    snack: false,
-    snackColor: "",
-    snackText: "",
     max25chars: (v) => v.length <= 25 || "Input too long!",
     expanded: [],
     search: "",
@@ -79,7 +69,7 @@ export default {
         sortable: false,
         value: "setor",
       },
-      { text: "Cultura", value: "choiceCulture" },
+      { text: "Cultura", value: "culture" },
       { text: "Copa (m²)", value: "copeArea" },
       { text: "Espaçamento Plantas", value: "betweenPlants" },
       { text: "Espaçamento Linhas", value: "betweenLines" },
@@ -87,6 +77,7 @@ export default {
       { text: "Vazão (V/h)", value: "flow" },
       { text: "Tipo de Irrigação", value: "irrigationType" },
       { text: "Eficiência", value: "efficiency" },
+      { text: '', value: 'actions', sortable: false },
     ],
   }),
   computed: {
@@ -95,16 +86,33 @@ export default {
       return this.headers[0]?.value;
     },
   },
+  created() {
+    this.$refs.gmap.clientWidth = this.headers.length;
+  },
   methods: {
-    ...mapActions({
-      editPlantation: "plantations/editPlantation",
-    }),
+    editItem(item) {
+      this.$emit('editItem', item);
+    },
+    deleteItem(item) {
+      this.$emit('deleteItem', item);
+    },
+    getLocation(item) {
+        return { lat: item.latitude, lng: item.longitude };
+    },
   },
 };
 </script>
 <style lang="scss">
-.expanded {
+table {
+  width: fit-content;
+}
+td:last-child {
   padding: 0px !important;
+  padding-right: 100px;
   padding-bottom: 20px !important;
+}
+.vue-map-container {
+  width: auto;
+  height: 400px;
 }
 </style>
