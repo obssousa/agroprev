@@ -1,114 +1,66 @@
 <template>
-<v-container>
-  <v-card class="card-parent">
-      <v-row dense>
-       <v-col
-          v-for="(item, i) in getCultures"
-          :key="i"
-          cols="12"
-          xl="2"
-          lg="3"
-          md="4"
-          sm="6"
-        >
-          <v-card
-            class="culture-card"
-            :color="getColorByValue(item.coefficient)"
-            @click="showCultureForm(item)"
-            dark
-          >
-            <div class="d-flex flex-no-wrap flex-column justify-space-between">
-                <v-card-title
-                  class="text-h5 black--text"
-                  v-text="item.name"
-                ></v-card-title>
-
-                <v-card-subtitle class="black--text" v-text="item.coefficient"></v-card-subtitle>
-              </div>
-          </v-card>
-        </v-col>
-      </v-row>
-      <CultureForm v-model="showModal" />
-  </v-card>
-  <v-fab-transition>
-      <v-btn
-        fab
-        large
-        dark
-        bottom
-        left
-        class="v-btn--example"
+  <v-container>
+    <v-row class="d-flex justify-center" dense>
+      <v-card
+        v-for="(item, i) in getCultures"
+        :key="i"
+        class="culture-card ma-2"
+        width="270px"
+        color="accent"
       >
-        <v-icon>{{ 'mdi-share-variant' }}</v-icon>
-      </v-btn>
-    </v-fab-transition>
-    </v-container>
+        <v-img height="200" :src="item.image"></v-img>
+        <div class="d-flex flex-no-wrap flex-column justify-space-between">
+          <v-card-title
+            :class="$vuetify.theme.dark ? 'text-h5 black--text' : 'text-h5 white--text'"
+            v-text="item.name"
+          ></v-card-title>
+
+          <v-divider :color="$vuetify.theme.dark ? 'primary' : 'accent'" class="mx-4"></v-divider>
+
+          <v-card-text>
+              <v-chip :class="$vuetify.theme.dark ? 'elevation-3 black--text' : 'elevation-3 white--text'" :color="$vuetify.theme.dark ? 'text' : 'primary'">Coeficiente: {{ item.coefficient }} </v-chip>
+          </v-card-text>
+        </div>
+      </v-card>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import CultureForm from '@/components/modal/CultureForm'
-import { mapGetters, mapActions } from 'vuex'
-  export default {
-    name: 'Home',
-    data: () => ({
-      showModal: false,
-      rules: [
-        value => !!value || 'Required.',
-        value => (value && value.length >= 3) || 'Min 3 characters',
-      ],
-    }),
-    components: {
-      CultureForm
-    },
-    computed: {
-    ...mapGetters("cultures", [
-        "getCultures"
-    ])
+import { mapGetters, mapActions } from "vuex";
+export default {
+  name: "Home",
+  data: () => ({
+    showModal: false,
+    rules: [
+      (value) => !!value || "Required.",
+      (value) => (value && value.length >= 3) || "Min 3 characters",
+    ],
+  }),
+  computed: {
+    ...mapGetters("cultures", ["getCultures"]),
   },
-    methods: {
-      ...mapActions({
-      createCulture: 'cultures/createCulture'
-      }),
-      getColorByValue(coefficient) {
-        if(coefficient <= 30)
-          return '#FFEB3B';
-
-        if(coefficient <= 40)
-          return '#FBC02D';
-
-        if(coefficient <= 50)
-          return '#FF6F00';
-
-        if(coefficient <= 60)
-          return '#FF7043';
-        
-        if(coefficient <= 70)
-          return '#E64A19';
-
-        if(coefficient <= 80)
-          return '#BF360C';
-      },
-      showCultureForm() {
-        this.showModal = true;
-      }
-    }
-  }
+  methods: {
+    ...mapActions({
+      createCulture: "cultures/createCulture",
+    }),
+  },
+};
 </script>
 
 <style>
-  /* This is for documentation purposes and will not be needed in your application */
-  .v-btn--example {
-    right: 0;
-    bottom: 0;
-    position: absolute;
-    margin: 0 0 16px 16px;
-  }
+/* This is for documentation purposes and will not be needed in your application */
+.v-btn--example {
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  margin: 0 0 16px 16px;
+}
 
-  .card-parent {
-    
-  }
+.card-parent {
+}
 
-  .culture-card {
-    width: 300px;
-  }
+.culture-card {
+  width: 300px;
+}
 </style>

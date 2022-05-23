@@ -7,7 +7,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title> {{ 'Detalhes de Plantações' }} </v-toolbar-title>
+        <v-toolbar-title> {{ "Detalhes de Plantações" }} </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-text-field
           v-if="search"
@@ -20,46 +20,56 @@
       </v-toolbar>
     </template>
     <template v-slot:[`item.emissors`]="{ item }">
-      <v-chip
-        color="primary"
-        dark
-      >
+      <v-chip color="primary" dark>
         {{ item.emissors }}
       </v-chip>
     </template>
     <template v-slot:[`item.flow`]="{ item }">
-      <v-chip
-        color="primary"
-        dark
-      >
+      <v-chip color="primary" dark>
         {{ item.flow }}
       </v-chip>
     </template>
     <template v-slot:[`item.irrigationType`]="{ item }">
-      <v-chip
-        color="primary"
-        dark
-      >
+      <v-chip color="primary" dark>
         {{ item.irrigationType }}
       </v-chip>
     </template>
     <template v-slot:[`item.efficiency`]="{ item }">
-      <v-chip
-        color="primary"
-        dark
+      <v-edit-dialog
+        :return-value.sync="item.efficiency"
       >
-        {{ item.efficiency }}
-      </v-chip>
+        <v-chip color="primary" dark>
+          {{ item.efficiency }}
+        </v-chip>
+        <template v-slot:input>
+          <v-text-field
+            v-model="item.efficiency"
+            :rules="[max25chars]"
+            label="Edit"
+            single-line
+            counter
+          ></v-text-field>
+          <v-card-actions>
+            <v-btn color="primary" text> Cancelar </v-btn>
+
+            <v-btn @click="editPlantation(item)" rounded color="primary"> Salvar </v-btn>
+          </v-card-actions>
+        </template>
+      </v-edit-dialog>
     </template>
   </v-data-table>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "PlantationTable",
   data: () => ({
+    snack: false,
+    snackColor: "",
+    snackText: "",
+    max25chars: (v) => v.length <= 25 || "Input too long!",
     expanded: [],
     search: "",
     headers: [
@@ -73,7 +83,7 @@ export default {
       { text: "Copa (m²)", value: "copeArea" },
       { text: "Espaçamento Plantas", value: "betweenPlants" },
       { text: "Espaçamento Linhas", value: "betweenLines" },
-      { text: "Emissores",  value: "emissors" },
+      { text: "Emissores", value: "emissors" },
       { text: "Vazão (V/h)", value: "flow" },
       { text: "Tipo de Irrigação", value: "irrigationType" },
       { text: "Eficiência", value: "efficiency" },
@@ -85,12 +95,16 @@ export default {
       return this.headers[0]?.value;
     },
   },
+  methods: {
+    ...mapActions({
+      editPlantation: "plantations/editPlantation",
+    }),
+  },
 };
 </script>
 <style lang="scss">
 .expanded {
-    padding: 0px !important;
-    padding-bottom: 20px !important;
+  padding: 0px !important;
+  padding-bottom: 20px !important;
 }
-
 </style>

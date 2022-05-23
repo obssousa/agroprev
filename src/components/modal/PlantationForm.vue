@@ -1,35 +1,210 @@
 <template>
   <div class="text-center">
-    <v-dialog v-model="show" fullscreen>
-      <flow-form
-        :standalone="false"
-        :questions="questions"
-        :language="language"
-        @submit="savePlantation"
-      />
+    <v-dialog
+      v-model="show"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="$emit('close')">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Cadastro de Plantio</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="savePlantation"> Salvar </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-card-text>
+          <v-card-title class="mb-n10">Sistema de Plantio</v-card-title>
+          <v-list three-line subheader>
+            <v-row class="mb-3">
+              <v-col
+                v-for="item in plantingSystem"
+                :key="item.title"
+                cols="12"
+                sm="12"
+                md="4"
+              >
+                <v-list-item class="mb-n10">
+                  <v-list-item-content>
+                    <v-text-field
+                      v-if="item.id !== 'culture'"
+                      v-model="item.value"
+                      :rules="rules"
+                      :type="item.type"
+                      :label="item.title"
+                    ></v-text-field>
+                    <v-select
+                      v-model="item.value"
+                      v-if="item.id === 'culture'"
+                      :items="getCultures"
+                      item-text="name"
+                      :label="item.title"
+                    ></v-select>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+            <v-subheader><h3>Distâncias</h3></v-subheader>
+            <v-row>
+              <v-col
+                v-for="item in plantingDistance"
+                :key="item.title"
+                cols="12"
+                sm="12"
+                md="4"
+              >
+                <v-list-item class="mb-n10">
+                  <v-list-item-content>
+                    <v-text-field
+                      v-if="item.id"
+                      v-model="item.value"
+                      :rules="rules"
+                      :type="item.type"
+                      :label="item.title"
+                    ></v-text-field>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-list>
+          <v-divider class="mt-10"></v-divider>
+          <v-card-title class="mb-n10 mt-5">Sistema de Irrigação</v-card-title>
+          <v-list three-line subheader>
+            <v-row>
+              <v-col
+                v-for="item in irrigationSystem"
+                :key="item.title"
+                cols="12"
+                sm="12"
+                md="4"
+              >
+                <v-list-item class="mb-n10">
+                  <v-list-item-content>
+                    <v-text-field
+                      v-if="item.id !== 'irrigationType'"
+                      v-model="item.value"
+                      :rules="rules"
+                      :type="item.type"
+                      :label="item.title"
+                    ></v-text-field>
+                    <v-select
+                      v-model="item.value"
+                      v-if="item.id === 'irrigationType'"
+                      :items="PlantationTypes"
+                      :label="item.title"
+                    ></v-select>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-list>
+          <v-divider class="mt-10"></v-divider>
+          <v-card-title>Localização</v-card-title>
+          <v-card-subtitle>Selecione a localização do seu plantio</v-card-subtitle>
+          <v-card
+            class="d-flex justify-space-around mb-6 mr-4 ml-4"
+            flat
+            tile
+          >
+            <GmapMap
+              :center="locationData.center"
+              :zoom="8"
+              map-type-id="terrain"
+              style="googleMaps"
+              @click="handleMapClick"
+            >
+              <GmapMarker
+                :position="locationData.marker.position"
+                :clickable="true"
+                :draggable="true"
+                @drag="handleMarkerDrag"
+                @click="panToMarker"
+              />
+            </GmapMap>
+          </v-card>
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </div>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
-import FlowForm, {
-  QuestionModel,
-  QuestionType,
-  ChoiceOption,
-  LanguageModel,
-} from "@ditdot-dev/vue-flow-form";
 import PlantationTypes from "@/constants/irrigationType";
 
 export default {
-  components: {
-    FlowForm,
-  },
   data() {
     return {
-      language: new LanguageModel({
-        // Your language definitions here (optional).
-        // You can leave out this prop if you want to use the default definitions.
-      }),
+      title: "Cadastro de Novo Plantio",
+      plantingSystem: [
+        {
+          title: "Setor, Gleba ou Talhão",
+          id: "setor",
+          value: "",
+          type: "text",
+        },
+        {
+          title: "Cultura",
+          id: "culture",
+          value: "",
+        },
+        {
+          id: "copeArea",
+          title: "Área de Copa (m²)",
+          value: "",
+          type: "number",
+        },
+      ],
+      plantingDistance: [
+        {
+          id: "betweenPlants",
+          title: "Entre Plantas (m)",
+          value: "",
+          type: "number",
+        },
+        {
+          id: "betweenLines",
+          title: "Entre Linhas (m)",
+          value: "",
+          type: "number",
+        },
+      ],
+      irrigationSystem: [
+        {
+          id: "emissors",
+          title: "Quantidade de emissores",
+          value: "",
+          type: "number",
+        },
+        {
+          id: "flow",
+          title: "Vazão de emissor (L/h)",
+          value: "",
+          type: "number",
+        },
+        {
+          id: "irrigationType",
+          title: "Selecione um tipo de irrigação:",
+          value: "",
+        },
+        {
+          id: "efficiency",
+          title: "Eficiência (%)",
+          value: "",
+          type: "number",
+        },
+      ],
+      locationData: {
+        marker: { position: { lat: -8.05428, lng: -34.8813 } },
+        center: { lat: -8.05428, lng: -34.8813 },
+      },
+      rules: [
+        value => !!value || 'Required.',
+      ],
+      PlantationTypes,
     };
   },
   props: {
@@ -37,106 +212,6 @@ export default {
   },
   computed: {
     ...mapGetters("cultures", ["getCultures"]),
-    questions() {
-      return [
-        // QuestionModel array
-        new QuestionModel({
-          title: "Setor",
-          type: QuestionType.Text,
-          id: "setor",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Gleba ou talhão",
-          required: true,
-          jump: "choiceCulture",
-        }),
-        new QuestionModel({
-          title: "Cultura",
-          type: QuestionType.Dropdown,
-          id: "choiceCulture",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Selecione uma cultura cadastrada:",
-          multiple: false,
-          required: true,
-          jump: "copeArea",
-          options: this.getCultures.map(
-            (culture) =>
-              new ChoiceOption({
-                label: culture.name,
-                value: culture.coefficient,
-              })
-          ),
-        }),
-        new QuestionModel({
-          title: "Cultura",
-          type: QuestionType.Number,
-          id: "copeArea",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Área de Copa (m²)",
-          required: true,
-          jump: "betweenPlants",
-        }),
-        new QuestionModel({
-          title: "Espaçamento",
-          type: QuestionType.Number,
-          id: "betweenPlants",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Entre Plantas (m)",
-          required: true,
-          jump: "betweenLines",
-        }),
-        new QuestionModel({
-          title: "Espaçamento",
-          type: QuestionType.Number,
-          id: "betweenLines",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Entre Linhas (m)",
-          required: true,
-          jump: "emissors",
-        }),
-        new QuestionModel({
-          title: "Irrigação",
-          type: QuestionType.Number,
-          id: "emissors",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Quantidade de emissores",
-          required: true,
-          jump: "flow",
-        }),
-        new QuestionModel({
-          title: "Irrigação",
-          type: QuestionType.Number,
-          id: "flow",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Vazão de emissor (L/h)",
-          required: true,
-          jump: "irrigationType",
-        }),
-        new QuestionModel({
-          title: "Cultura",
-          type: QuestionType.Dropdown,
-          id: "irrigationType",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Selecione um tipo de irrigação:",
-          multiple: false,
-          required: true,
-          jump: "efficiency",
-          options: PlantationTypes.map(
-            (type) =>
-              new ChoiceOption({
-                label: type,
-              })
-          ),
-        }),
-        new QuestionModel({
-          title: "Eficiência",
-          type: QuestionType.Number,
-          id: "efficiency",
-          tagline: "Cadastro de Novo Plantio",
-          subtitle: "Eficiência (%)",
-          required: true,
-        }),
-      ];
-    },
     show: {
       get() {
         return this.value;
@@ -150,26 +225,56 @@ export default {
     ...mapActions({
       createPlantation: "plantations/createPlantation",
     }),
-    savePlantation(questionList) {
+    savePlantation() {
       let formData = {};
+      let location = { latitude: this.locationData.marker.position.lat, longitude: this.locationData.marker.position.lng };
+      let allData = this.plantingSystem.concat(this.plantingDistance, this.irrigationSystem);
 
-      questionList.forEach((question) => {
-        formData[question.id] = question.answer;
+      console.log(allData);
+      console.log(location);
+
+      allData.forEach((question) => {
+        formData[question.id] = question.value;
       });
+
+      formData.location = location;
 
       console.log(formData);
 
       this.createPlantation(formData);
-      this.$emit('close');
+      this.$emit("close");
+    },
+    geolocate() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.marker.position = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        this.panToMarker();
+      });
+    },
+    //sets the position of marker when dragged
+    handleMarkerDrag(e) {
+      this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+    },
+    //Moves the map view port to marker
+    panToMarker() {
+      this.$refs.mapRef.panTo(this.marker.position);
+      this.$refs.mapRef.setZoom(18);
+    },
+    //Moves the marker to click position on the map
+    handleMapClick(e) {
+      this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+      console.log(e);
     },
   },
 };
 </script>
 <style>
-/* Import Vue Flow Form base CSS */
-@import "~@ditdot-dev/vue-flow-form/dist/vue-flow-form.css";
-/* Import one of the Vue Flow Form CSS themes (optional) */
-/* @import "~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-minimal.css"; */
-/* @import '~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-green.css'; */
-@import "~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-purple.css";
+
+.vue-map-container {
+  width: 1980px;
+  height: 400px;
+}
+
 </style>

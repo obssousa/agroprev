@@ -1,6 +1,7 @@
 const state = () => ({
     plantations: [
         {
+            id: 0,
             setor: "Setor 1",
             choiceCulture: "12",
             copeArea: 231,
@@ -12,6 +13,7 @@ const state = () => ({
             efficiency: 23
         },
         {
+            id: 1,
             setor: "Setor 2",
             choiceCulture: "12",
             copeArea: 231,
@@ -23,6 +25,7 @@ const state = () => ({
             efficiency: 23
         },
         {
+            id: 2,
             setor: "Setor 3",
             choiceCulture: "12",
             copeArea: 231,
@@ -34,6 +37,7 @@ const state = () => ({
             efficiency: 23
         },
         {
+            id: 3,
             setor: "Gleba 1",
             choiceCulture: "12",
             copeArea: 231,
@@ -45,6 +49,7 @@ const state = () => ({
             efficiency: 23
         },
         {
+            id: 4,
             setor: "Gleba 2",
             choiceCulture: "12",
             copeArea: 231,

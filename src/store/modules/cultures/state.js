@@ -1,28 +1,19 @@
 const state = () => ({
     cultures: [
         {
-            name: 'Cultura1',
+            name: 'IPA Sertânia',
             coefficient: '12',
+            image: 'https://1.bp.blogspot.com/-1S0aDy5HKOk/Xut6xkxQ-5I/AAAAAAAABME/tYRa0FTmZkEuCWwN9rW8vQnxvknnAKEZQCLcBGAsYHQ/s320/palma1.jpg'
         },
         {
-            name: 'Cultura2',
+            name: 'Miúda',
             coefficient: '22',
+            image: 'https://i0.wp.com/aprenderaplantar.com.br/wp-content/uploads/2020/03/palmaforrageira2.jpg?resize=1140%2C624&ssl=1'
         },
         {
-            name: 'Cultura3',
+            name: 'Orelha de Elefante',
             coefficient: '33',
-        },
-        {
-            name: 'Cultura4',
-            coefficient: '47',
-        },
-        {
-            name: 'Cultura5',
-            coefficient: '59',
-        },
-        {
-            name: 'Cultura6',
-            coefficient: '72',
+            image: 'https://img.olx.com.br/images/52/521913082934398.jpg'
         },
     ],
 })
