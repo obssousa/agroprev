@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    class="plantationTable"
     :headers="headers"
     :items="getPlantations"
     :item-key="itemKey"
@@ -36,7 +37,8 @@
       </v-icon>
     </template>
     <template v-slot:expanded-item="{ headers, item }">
-      <td :colspan="headers.length">
+      <td class="expanded-td" :colspan="headers.length">
+        <v-container fluid>
             <GmapMap
               :center="getLocation(item.location)"
               :zoom="8"
@@ -48,6 +50,7 @@
                 :draggable="false"
               />
             </GmapMap>
+        </v-container>
       </td>
     </template>
   </v-data-table>
@@ -103,13 +106,21 @@ export default {
 };
 </script>
 <style lang="scss">
-table {
-  width: fit-content;
-}
-td:last-child {
-  padding: 0px !important;
-  padding-right: 100px;
-  padding-bottom: 20px !important;
+
+.plantationTable {
+  width: -webkit-fill-available;
+
+  table {
+    width: fit-content;
+  }
+
+  .expanded-td {
+    padding: 0px !important;
+    padding-right: 100px;
+    padding-bottom: 20px !important;
+    white-space: nowrap !important;
+    width: 1% !important;
+  }
 }
 .vue-map-container {
   width: auto;

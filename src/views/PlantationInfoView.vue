@@ -1,6 +1,6 @@
 <template>
   <v-sheet>
-    <v-card class="card-parent">
+    <v-card class="card-parent d-flex justify-space-between">
       <PlantationTable @editItem="editItem" @deleteItem="deleteItem" />
       <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="showModal = false" />
     </v-card>
