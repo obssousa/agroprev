@@ -105,11 +105,7 @@
           <v-divider class="mt-10"></v-divider>
           <v-card-title>Localização</v-card-title>
           <v-card-subtitle>Selecione a localização do seu plantio</v-card-subtitle>
-          <v-card
-            class="d-flex justify-space-around mb-6 mr-4 ml-4"
-            flat
-            tile
-          >
+          <v-container fluid>
             <GmapMap
               :center="locationData.center"
               :zoom="8"
@@ -125,7 +121,7 @@
                 @click="panToMarker"
               />
             </GmapMap>
-          </v-card>
+          </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -284,11 +280,11 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss">
 
-.vue-map-container {
-  width: 1980px;
-  height: 400px;
-}
+  .vue-map-container {
+    width: 1980px;
+    height: 400px;
+  }
 
-</style>
+</style>>

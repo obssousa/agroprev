@@ -1,0 +1,35 @@
+import math, {
+    atan2, chain, derivative, e, evaluate, log, pi, pow, round, sqrt
+  } from 'mathjs'
+const ETc = 'bawaw';
+const Rp = '';
+const Ea = '';
+
+const calcFw = () => {
+    const fc = '';
+    const AT = '';
+    let solve = {
+        fc,
+        AT
+    };
+    return math.evaluate('fc * AT', solve);
+}
+
+const calc = (E1: Number, E2: Number, n: Number, q: Number) => {
+    
+    let fw = calcFw();
+    let Kl = math.evaluate('srqt(fw)', fw);
+    
+    let a = { ETc, Rp, E1, E2, Kl };
+    let b = { n, q, Ea };
+
+    a = math.evaluate('ETc * Rp * E1 * E2 * Kl', a);
+    b = math.evaluate('n * q * Ea', b);
+
+    let ti = { a, b };
+
+    return math.evaluate('a * b', ti);
+}
+
+
+export default calc;

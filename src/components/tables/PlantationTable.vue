@@ -89,9 +89,9 @@ export default {
       return this.headers[0]?.value;
     },
   },
-  created() {
-    this.$refs.gmap.clientWidth = this.headers.length;
-  },
+  // created() {
+  //   this.$refs.gmap.clientWidth = this.headers.length;
+  // },
   methods: {
     editItem(item) {
       this.$emit('editItem', item);
