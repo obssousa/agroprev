@@ -1,24 +1,43 @@
 import math, {
     atan2, chain, derivative, e, evaluate, log, pi, pow, round, sqrt
   } from 'mathjs'
-const ETc = 'bawaw';
-const Rp = '';
-const Ea = '';
 
-const calcFw = () => {
+const Rp = ''; // is the 𝐸𝑇𝑐 replacement according to treatment ?
+const Ea = ''; //  application efficiency coefficient
+
+const calcETc = (ETo, Kc) => {
+    // crop evapotranspiration ?
+    // ref(Evo) (ETo) * Kc (from ADD calc)
+    var solve = {
+        ETo,
+        Kc
+    };
+
+    return math.evaluate('ETo * Kc', solve);
+}
+
+const calcKl = (AT) => {
     const fc = '';
-    const AT = '';
-    let solve = {
+    var solve = {
         fc,
         AT
     };
-    return math.evaluate('fc * AT', solve);
+    var fw = math.evaluate('fc * AT', solve)
+
+    return math.evaluate('srqt(fw)', fw);
 }
 
-const calc = (E1: Number, E2: Number, n: Number, q: Number) => {
+// 𝐸1 is the spacing between crop rows, in meters; 
+// 𝐸2 is the spacing between plants within row,
+// 𝐾𝑙 is location coefficient, a decimal value;
+// 𝑛 is the number of emitters;
+// 𝑞 is the outflow of the emitter, in liters per hour 𝐿/h;
+const calc = (E1: Number, E2: Number, n: Number, q: Number, AT: Number, ETo: Number) => {
     
-    let fw = calcFw();
-    let Kl = math.evaluate('srqt(fw)', fw);
+    // call to Kc function evolving ADD
+    let Kc = '';
+    let Kl = calcKl(AT);
+    let ETc = calcETc(ETo, Kc);
     
     let a = { ETc, Rp, E1, E2, Kl };
     let b = { n, q, Ea };

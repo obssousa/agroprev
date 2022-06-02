@@ -8,7 +8,7 @@
           sm="6"
         >
         <v-text-field
-            :value="plantation.choiceCulture"
+            :value="plantation.culture"
             readonly
             label="Cultura"
             outlined
