@@ -13,7 +13,7 @@ const state = () => ({
             efficiency: 23,
             location: {
                 latitude:  -8.05428,
-                longitude: -34.8813
+                longitude: -34.8813,
             }
         },
         {
@@ -29,7 +29,7 @@ const state = () => ({
             efficiency: 23,
             location: {
                 latitude: -8.310,
-                longitude: -36.819
+                longitude: -36.819,
             }
         },
         {
@@ -45,7 +45,7 @@ const state = () => ({
             efficiency: 23,
             location: {
                 latitude: -8.310,
-                longitude: -36.819
+                longitude: -36.819,
             }
         },
         {
@@ -61,7 +61,7 @@ const state = () => ({
             efficiency: 23,
             location: {
                 latitude:  -8.05428,
-                longitude: -34.8813
+                longitude: -34.8813,
             }
         },
         {
@@ -77,7 +77,7 @@ const state = () => ({
             efficiency: 23,
             location: {
                 latitude: -8.310,
-                longitude: -36.819
+                longitude: -36.819,
             }
         }
     ],

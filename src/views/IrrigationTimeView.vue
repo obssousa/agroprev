@@ -1,12 +1,40 @@
 <template>
   <v-container>
-    <v-row justify="center">
+    <v-snackbar
+      centered
+      v-model="toast"
+      :timeout="5000"
+      :value="true"
+      absolute
+      right
+      top
+      tile
+      color="red accent-2"
+    >
+      {{ toastText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          fab
+          text
+          small
+          v-bind="attrs"
+          @click="toast = false"
+        >
+          <v-icon dark>
+            mdi-close
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-row justify="center" class="mt-6">
       <v-select
           v-model="selectedSector"
           :items="getPlantations"
           label="Setor / Gleba / Talhão"
           item-text="setor"
           outlined
+          @change="getPlantationWeather()"
         ></v-select>
       <v-expansion-panels focusable>
         <v-expansion-panel v-for="(item, i) in fields" :key="i">
@@ -17,11 +45,11 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <v-btn
-        class="ma-2"
+        class="ma-2 mt-6"
         :loading="loading"
-        :disabled="loading"
+        :disabled="!submit"
         color="info"
-        @click="loader()"
+        @click="calcEstimateTime()"
       >
         Calcular tempo de irrigação
         <template v-slot:loader>
@@ -38,7 +66,8 @@
 import PlantationInfoCard from "@/components/cards/irrigation/PlantationInfoCard.vue";
 import IrrigationSystemCard from "@/components/cards/irrigation/IrrigationSystemCard.vue";
 import AgrometeorologicalCard from "@/components/cards/irrigation/AgrometeorologicalCard.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import time from "@/hooks/time";
 
 export default {
   name: "IrrigationTimeView",
@@ -48,6 +77,9 @@ export default {
       preciptation: '',
       panel: [],
       items: 5,
+      toast: false,
+      toastText: '',
+      submit: false,
       loading: false,
       fields: [
         {
@@ -67,15 +99,44 @@ export default {
   },
   computed: {
     ...mapGetters("plantations", ["getPlantations"]),
+    ...mapGetters("info", ["getWeather"]),
     selectedPlantation() {
       return this.getPlantations.find(x => x.setor === this.selectedSector);
     },
   },
   methods: {
-    loader() {
+    ...mapActions({
+      calcADD: 'servagro/calcADD',
+      fetchWeather: 'info/fetchWeather',
+    }),
+    calcEstimateTime() {
       this.loading = true;
-      setTimeout(() => (this.loading = false), 3000);
+      const temperature = this.getWeather?.temp;
+      const payload = {
+        today: time.getFormattedDate(time.getToday()),
+        plantingDate: '02032022',
+        temperature: temperature,
+      }
+
+      this.calcADD(payload).finally(() => { this.loading = false; });
     },
+    getPlantationWeather() {
+      const payload = {
+        lat: this.selectedPlantation.location.latitude,
+        lon: this.selectedPlantation.location.longitude,
+        today: time.getToday(),
+      }
+
+      this.fetchWeather(payload)
+      .then(() => {
+        this.submit = true;
+      })
+      .catch((err) => {
+          this.submit = false;
+          this.toast = true;
+          this.toastText = `${err.message} - ${err.response.data.message}`;
+      });
+    }
   },
 };
 </script>

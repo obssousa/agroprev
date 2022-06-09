@@ -29,10 +29,10 @@
 <script>
 export default {
   props: {
-    preciptation: {
-      type: String,
-      default: () => "",
-    },
+     plantation: {
+       type: {},
+       default: () => ({})
+     }
   },
   data() {
     return {

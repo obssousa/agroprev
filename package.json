@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ditdot-dev/vue-flow-form": "1.1.7",
+    "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "gmap-vue": "^3.5.2",
     "mathjs": "^10.6.1",

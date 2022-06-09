@@ -48,8 +48,8 @@
 export default {
   props: {
      plantation: {
-       type: String,
-       default: () => ""
+       type: {},
+       default: () => ({})
      }
   },
   computed: {
