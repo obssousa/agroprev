@@ -108,6 +108,7 @@ export default {
     ...mapActions({
       calcADD: 'servagro/calcADD',
       fetchWeather: 'info/fetchWeather',
+      fetchPreciptation: 'info/fetchPreciptation',
     }),
     calcEstimateTime() {
       this.loading = true;
@@ -120,14 +121,21 @@ export default {
 
       this.calcADD(payload).finally(() => { this.loading = false; });
     },
-    getPlantationWeather() {
+    async getPlantationWeather() {
       const payload = {
         lat: this.selectedPlantation.location.latitude,
         lon: this.selectedPlantation.location.longitude,
         today: time.getToday(),
       }
 
-      this.fetchWeather(payload)
+      await this.fetchWeather(payload)
+      .catch((err) => {
+          this.submit = false;
+          this.toast = true;
+          this.toastText = `${err.message} - ${err.response.data.message}`;
+      });
+
+      await this.fetchPreciptation(payload)
       .then(() => {
         this.submit = true;
       })
