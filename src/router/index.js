@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '@/views/HomeView'
 import AboutView from '@/views/AboutView'
 import CultureView from '@/views/CultureView'
 import IrrigationTimeView from '@/views/IrrigationTimeView'
@@ -11,8 +10,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Inicio',
-    component: HomeView
+    name: 'Informações de Plantio',
+    component: PlantationInfoView
   },
   {
     path: '/about',
@@ -29,11 +28,6 @@ const routes = [
     name: 'Estimativa de Irrigação',
     component: IrrigationTimeView
   },
-  {
-    path: '/plantation',
-    name: 'Plantação',
-    component: PlantationInfoView
-  }
 ]
 
 const router = new VueRouter({
