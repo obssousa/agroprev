@@ -1,6 +1,5 @@
 const mutations = {
     addPlantation(state, item) {
-        console.log(state.plantations);
         if(state.plantations.length){
             item.id = state.plantations[state.plantations.length - 1].id + 1
         } else {
@@ -13,6 +12,12 @@ const mutations = {
             return object.id === item.id;
           });
         state.plantations[index] = item;
+    },
+    deletePlantation(state, item) {
+        const index =  state.plantations.findIndex(object => {
+            return object.id === item.id;
+          });
+        state.plantations.splice(index, 1);
     }
 }
 

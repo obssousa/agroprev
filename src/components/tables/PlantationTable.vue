@@ -72,6 +72,7 @@ export default {
         sortable: false,
         value: "setor",
       },
+      { text: "Data de Plantio", value: "plantio" },
       { text: "Cultura", value: "culture" },
       { text: "Copa (m²)", value: "copeArea" },
       { text: "Espaçamento Plantas", value: "betweenPlants" },

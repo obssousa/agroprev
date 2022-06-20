@@ -1,4 +1,5 @@
 import axios from 'axios';
+import fetchJsonp from 'fetch-jsonp'; 
 const actions = {
     fetchDailyModel({ commit }, item) {
         commit('saveDailyModel', item);
@@ -16,17 +17,21 @@ const actions = {
             })
     },
     calcADD({ commit }, payload) {
-        const url = '/add/' + payload.temperature + '/' + payload.plantingDate
+        const url = 'https://servagro2.augustobrandao.repl.co/add/' + payload.temperature + '/' + payload.plantingDate
             + '/' + payload.today;
         return new Promise((resolve, reject) => {
-            axios.post(url)
-                .then((data) => {
-                    commit('saveADD', data);
-                    resolve(data)
+            fetchJsonp(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                credentials: 'include',
+                timeout: 60000,
+              })
+              .then(res => { 
+                  res.json()
+                  commit('saveADD', res.json()); 
                 })
-                .catch((err) => {
-                    reject(err)
-                })
+              .then(json => resolve(json))
+              .catch(res => reject(res));
         })
     },
     createDailyModel({ commit }, payload) {

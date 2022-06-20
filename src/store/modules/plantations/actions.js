@@ -4,6 +4,9 @@ const actions = {
     },
     editPlantation({ commit }, item) {
         commit('editPlantation', item)
+    },
+    deletePlantation({ commit }, item) {
+        commit('deletePlantation', item)
     }
 }
 

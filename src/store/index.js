@@ -4,6 +4,8 @@ import Cultures from '@/store/modules/cultures'
 import Plantations from '@/store/modules/plantations'
 import Info from '@/store/modules/info'
 import Servagro from '@/store/modules/servagro'
+import createPersistedState from "vuex-persistedstate";
+// import Cookies from "js-cookie";
 
 Vue.use(Vuex)
 
@@ -13,6 +15,6 @@ export default new Vuex.Store({
     plantations: Plantations,
     info: Info,
     servagro: Servagro
-
-  }
+  },
+  plugins: [createPersistedState()],
 })

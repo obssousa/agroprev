@@ -151,6 +151,12 @@ export default {
           type: "text",
         },
         {
+          title: "Data de Plantio",
+          id: "plantio",
+          value: "",
+          type: "date",
+        },
+        {
           title: "Cultura",
           id: "culture",
           value: "",
@@ -231,8 +237,9 @@ export default {
     }),
     initialize() {
       this.plantingSystem[0].value = this.plantation.setor;
-      this.plantingSystem[1].value = this.plantation.culture;
-      this.plantingSystem[2].value = this.plantation.copeArea;
+      this.plantingSystem[1].value = this.plantation.plantio;
+      this.plantingSystem[2].value = this.plantation.culture;
+      this.plantingSystem[3].value = this.plantation.copeArea;
       this.plantingDistance[0].value = this.plantation.betweenPlants;
       this.plantingDistance[1].value = this.plantation.betweenLines;
       this.irrigationSystem[0].value = this.plantation.emissors;

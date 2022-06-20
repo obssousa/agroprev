@@ -61,7 +61,7 @@
 export default {
   props: {
      plantation: {
-       type: {},
+       type: Object,
        default: () => ({})
      }
   },

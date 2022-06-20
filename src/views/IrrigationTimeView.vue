@@ -33,6 +33,7 @@
           :items="getPlantations"
           label="Setor / Gleba / Talhão"
           item-text="setor"
+          item-value="id"
           outlined
           @change="getPlantationWeather()"
         ></v-select>
@@ -102,36 +103,29 @@ export default {
     ...mapGetters("plantations", ["getPlantations"]),
     ...mapGetters("info", ["getWeather"]),
     selectedPlantation() {
-      return this.getPlantations.find(x => x.setor === this.selectedSector);
+      return this.getPlantations.find(x => x.id === this.selectedSector);
     },
   },
   methods: {
     ...mapActions({
       calcADD: 'servagro/calcADD',
       fetchWeather: 'info/fetchWeather',
-      fetchPreciptation: 'info/fetchPreciptation',
     }),
     calcEstimateTime() {
       this.loading = true;
       const temperature = this.getWeather?.temp;
       const payload = {
         today: time.getFormattedDate(time.getToday()),
-        plantingDate: '02032022',
-        temperature: temperature,
+        plantingDate: time.getFormattedDate(this.selectedPlantation.plantio),
+        temperature: Math.round(temperature),
       }
 
       this.calcADD(payload)
       .then(() => {
-        console.log(payload);
         let irrigation = irrigationTime.calc();
 
         console.log(irrigation);
-
-        // 𝐸1 is the spacing between crop rows, in meters; 
-        // 𝐸2 is the spacing between plants within row,
-        // 𝐾𝑙 is location coefficient, a decimal value;
-        // 𝑛 is the number of emitters;
-        // 𝑞 is the outflow of the emitter, in liters per hour 𝐿/h;
+        
         const calc = irrigation.calc(
           this.selectedPlantation.betweenLines, 
           this.selectedPlantation.betweenPlants,
@@ -147,20 +141,11 @@ export default {
       const payload = {
         lat: this.selectedPlantation.location.latitude,
         lon: this.selectedPlantation.location.longitude,
-        today: time.getToday(),
+        today: time.getToday() / 1000,
       }
 
       await this.fetchWeather(payload)
-      .catch((err) => {
-          this.submit = false;
-          this.toast = true;
-          this.toastText = `${err.message} - ${err.response.data.message}`;
-      });
-
-      await this.fetchPreciptation(payload)
-      .then(() => {
-        this.submit = true;
-      })
+      .then(this.submit = true)
       .catch((err) => {
           this.submit = false;
           this.toast = true;

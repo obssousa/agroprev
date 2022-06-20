@@ -1,7 +1,7 @@
 <template>
   <v-sheet>
     <v-card class="card-parent d-flex justify-space-between">
-      <PlantationTable @editItem="editItem" @deleteItem="deleteItem" />
+      <PlantationTable @editItem="editItem" @deleteItem="openDeleteDialog" />
       <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="showModal = false" />
     </v-card>
     <v-fab-transition>
@@ -17,10 +17,21 @@
         <v-icon>{{ "mdi-plus" }}</v-icon>
       </v-btn>
     </v-fab-transition>
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title>Apagar plantação</v-card-title>
+        <v-card-text>Apagar uma plantação não pode ser revertido, tens certeza?</v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" text @click="dialogDelete = false">CANCELAR</v-btn>
+          <v-btn color="primary" text @click="deleteItem(plantation)">APAGAR</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import PlantationForm from "@/components/modal/PlantationForm.vue";
 import PlantationTable from "@/components/tables/PlantationTable.vue";
 
@@ -29,23 +40,31 @@ export default {
   data: () => ({
     plantation: {},
     showModal: false,
+    dialogDelete: false,
   }),
   components: {
     PlantationForm,
     PlantationTable,
   },
   methods: {
+    ...mapActions({
+      deletePlantation: "plantations/deletePlantation",
+    }),
     showCultureForm() {
+      this.plantation = {};
       this.showModal = true;
     },
     editItem(item) {
       this.plantation = item;
       this.showModal = true;
     },
-    deleteItem(item) {
+    openDeleteDialog(item) {
       this.plantation = item;
-      this.showModal = true;
-    }
+      this.dialogDelete = true;
+    },
+    deleteItem(item) {
+      this.deletePlantation(item).finally(this.dialogDelete = false);
+    },
   },
 };
 </script>
@@ -57,9 +76,6 @@ export default {
   bottom: 0;
   position: absolute;
   margin: 0 0 16px 16px;
-}
-
-.card-parent {
 }
 
 .culture-card {
