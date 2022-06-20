@@ -1,5 +1,5 @@
 import axios from 'axios';
-import fetchJsonp from 'fetch-jsonp'; 
+
 const actions = {
     fetchDailyModel({ commit }, item) {
         commit('saveDailyModel', item);
@@ -17,21 +17,17 @@ const actions = {
             })
     },
     calcADD({ commit }, payload) {
-        const url = 'https://servagro2.augustobrandao.repl.co/add/' + payload.temperature + '/' + payload.plantingDate
-            + '/' + payload.today;
+        const url = 'https://shrouded-badlands-78358.herokuapp.com/https://servagro2.augustobrandao.repl.co/add/' + payload.temperature + '/' + payload.plantingDate
+            + '/' + payload.today + '/';
         return new Promise((resolve, reject) => {
-            fetchJsonp(url, {
-                method: 'POST',
-                mode: 'no-cors',
-                credentials: 'include',
-                timeout: 60000,
-              })
-              .then(res => { 
-                  res.json()
-                  commit('saveADD', res.json()); 
-                })
-              .then(json => resolve(json))
-              .catch(res => reject(res));
+            axios.get(url)
+            .then((data) => {
+                commit('saveADD', data.data);
+                resolve(data);
+            })
+            .catch((err) => {
+                reject(err);
+            })
         })
     },
     createDailyModel({ commit }, payload) {
