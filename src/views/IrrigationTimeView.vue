@@ -68,6 +68,7 @@ import IrrigationSystemCard from "@/components/cards/irrigation/IrrigationSystem
 import AgrometeorologicalCard from "@/components/cards/irrigation/AgrometeorologicalCard.vue";
 import { mapGetters, mapActions } from "vuex";
 import time from "@/hooks/time";
+import irrigationTime from "@/hooks/irrigationTime";
 
 export default {
   name: "IrrigationTimeView",
@@ -119,7 +120,28 @@ export default {
         temperature: temperature,
       }
 
-      this.calcADD(payload).finally(() => { this.loading = false; });
+      this.calcADD(payload)
+      .then(() => {
+        console.log(payload);
+        let irrigation = irrigationTime.calc();
+
+        console.log(irrigation);
+
+        // 𝐸1 is the spacing between crop rows, in meters; 
+        // 𝐸2 is the spacing between plants within row,
+        // 𝐾𝑙 is location coefficient, a decimal value;
+        // 𝑛 is the number of emitters;
+        // 𝑞 is the outflow of the emitter, in liters per hour 𝐿/h;
+        const calc = irrigation.calc(
+          this.selectedPlantation.betweenLines, 
+          this.selectedPlantation.betweenPlants,
+          this.selectedPlantation.emissors,
+          this.selectedPlantation.flow);
+
+      console.log(calc);
+    
+      })
+      .finally(() => { this.loading = false; });
     },
     async getPlantationWeather() {
       const payload = {

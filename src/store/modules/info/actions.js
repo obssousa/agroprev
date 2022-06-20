@@ -13,19 +13,6 @@ const actions = {
             })
         })
     },
-    fetchPreciptation({ commit }, payload) {
-        const url = `http://api.openweathermap.org/data/2.5/forecast?lat=${payload.lat}&lon=${payload.lon}&appid=b4460409162d004303a88a627047f9d0`;
-        return new Promise((resolve, reject) => {
-        axios.get(url)
-            .then((data) => {
-                commit('savePreciptation', data.data.current);
-                resolve(data)
-            })
-            .catch((err) => {
-                reject(err)
-            })
-        })
-    }
 }
 
 export default actions;

@@ -33,6 +33,9 @@ const calcKl = (AT) => {
 // 𝑞 is the outflow of the emitter, in liters per hour 𝐿/h;
 const calc = (E1, E2, n, q, AT, ETo, type) => {
     
+    ETo = '12';
+    AT = '12';
+    type = '12';
     // call to Kc function evolving ADD
     let Kc = calcKc(type);
     let Kl = calcKl(AT);

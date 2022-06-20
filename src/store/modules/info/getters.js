@@ -1,6 +1,6 @@
 const getters = {
-    getPreciptation(state) {
-        return state.preciptation
+    getWeather(state) {
+        return state.weather
     },
 }
 
