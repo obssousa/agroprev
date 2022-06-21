@@ -6,6 +6,14 @@ const getToday = () => {
   return startOfDay;
 }
 
+const getPreviousDay = () => {
+
+  const today = new Date();
+  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+
+  return startOfDay;
+}
+
 const getFormattedDate = (period) => {
 
   const date = new Date(period);
@@ -19,7 +27,8 @@ const getFormattedDate = (period) => {
 
 const methods = {
   getToday,
-  getFormattedDate
+  getFormattedDate,
+  getPreviousDay
 }
 
 export default methods;

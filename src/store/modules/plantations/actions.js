@@ -7,6 +7,9 @@ const actions = {
     },
     deletePlantation({ commit }, item) {
         commit('deletePlantation', item)
+    },
+    addEstimateTime({ commit }, item) {
+        commit('addEstimateTime', item)
     }
 }
 

@@ -23,25 +23,23 @@ const actions = {
             axios.get(url)
             .then((data) => {
                 commit('saveADD', data.data);
-                resolve(data);
+                resolve(data.data);
             })
             .catch((err) => {
                 reject(err);
             })
         })
     },
-    createDailyModel({ commit }, payload) {
-        const url = '/modelo/' + payload;
-        return new Promise((resolve, reject) => {
-            axios.post(url)
-                .then((data) => {
-                    commit('saveADD', data);
-                    resolve(data)
-                })
-                .catch((err) => {
-                    reject(err)
-                })
-        })
+    calculateEvoTranspiration({ commit }, payload) {
+        const url = 'https://shrouded-badlands-78358.herokuapp.com/http://app.deinfo.ufrpe.br/calculoEvapotranspiracao/';
+        axios.get(url, { payload })
+            .then((data) => {
+                commit('saveEvoTranspiration', data);
+                return data;
+            })
+            .catch((err) => {
+                return err;
+            })
     },
 }
 

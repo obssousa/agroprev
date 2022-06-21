@@ -7,7 +7,10 @@ const mutations = {
     },
     saveADD(state, item) {
         state.add = item;
-    }
+    },
+    saveEvoTranspiration(state, item) {
+        state.evoTranspiration = item;
+    },
 }
 
 export default mutations;

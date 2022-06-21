@@ -7,6 +7,9 @@ const getters = {
     },
     getADD(state) {
         return state.add
+    },
+    getEvoTranspiration(state) {
+        return state.evoTranspiration
     }
 }
 

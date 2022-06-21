@@ -70,6 +70,7 @@ import AgrometeorologicalCard from "@/components/cards/irrigation/Agrometeorolog
 import { mapGetters, mapActions } from "vuex";
 import time from "@/hooks/time";
 import irrigationTime from "@/hooks/irrigationTime";
+import kcCalc from "@/hooks/kc";
 
 export default {
   name: "IrrigationTimeView",
@@ -101,6 +102,7 @@ export default {
   },
   computed: {
     ...mapGetters("plantations", ["getPlantations"]),
+    ...mapGetters("cultures", ["getCultures"]),
     ...mapGetters("info", ["getWeather"]),
     selectedPlantation() {
       return this.getPlantations.find(x => x.id === this.selectedSector);
@@ -109,8 +111,12 @@ export default {
   methods: {
     ...mapActions({
       calcADD: 'servagro/calcADD',
+      calcEvoTranspiration: 'servagro/calculateEvoTranspiration',
       fetchWeather: 'info/fetchWeather',
     }),
+    getCultureType(name) {
+      return (this.getCultures.find((culture) => culture.name === name)).type;
+    },
     calcEstimateTime() {
       this.loading = true;
       const temperature = this.getWeather?.temp;
@@ -121,18 +127,21 @@ export default {
       }
 
       this.calcADD(payload)
-      .then(() => {
-        let irrigation = irrigationTime.calc();
-
-        console.log(irrigation);
-        
-        const calc = irrigation.calc(
+      .then((res) => {
+        const kc = kcCalc(
+          this.getCultureType(this.selectedPlantation.culture), res
+        );
+        const calc = irrigationTime(
           this.selectedPlantation.betweenLines, 
           this.selectedPlantation.betweenPlants,
           this.selectedPlantation.emissors,
-          this.selectedPlantation.flow);
+          this.selectedPlantation.flow,
+          this.selectedPlantation.betweenLines * this.selectedPlantation.betweenPlants,
+          this.preciptation,
+          kc,
+          this.selectedPlantation.copeArea);
 
-      console.log(calc);
+        console.log(calc);
     
       })
       .finally(() => { this.loading = false; });

@@ -18,7 +18,15 @@ const mutations = {
             return object.id === item.id;
           });
         state.plantations.splice(index, 1);
-    }
+    },
+    addEstimateTime(state, item) {
+        if(state.irrigations.length){
+            item.id = state.irrigations[state.irrigations.length - 1].id + 1
+        } else {
+            item.id = 0;
+        }
+        state.irrigations.push(item);
+    },
 }
 
 export default mutations;
