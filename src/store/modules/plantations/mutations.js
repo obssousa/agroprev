@@ -20,12 +20,13 @@ const mutations = {
         state.plantations.splice(index, 1);
     },
     addEstimateTime(state, item) {
-        if(state.irrigations.length){
-            item.id = state.irrigations[state.irrigations.length - 1].id + 1
+        const blade = { item }
+        if(state.waterBlades.length){
+            blade.id = state.waterBlades[state.waterBlades.length - 1].id + 1
         } else {
-            item.id = 0;
+            blade.id = 0;
         }
-        state.irrigations.push(item);
+        state.waterBlades.push(blade);
     },
 }
 

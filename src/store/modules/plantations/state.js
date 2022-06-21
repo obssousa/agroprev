@@ -1,6 +1,6 @@
 const state = () => ({
     plantations: [],
-    irrigations: [],
+    waterBlades: [],
 })
 
 export default state;

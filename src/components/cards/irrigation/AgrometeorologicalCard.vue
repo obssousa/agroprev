@@ -5,22 +5,11 @@
         <div class="d-flex align-center">
         <v-text-field
           v-model="value"
-          @input="$emit('update:preciptation', value);"
-          :readonly="!editing"
+          @input="$emit('update:preciptation', value), $emit('update:rules', rules);"
+          :rules="rules"
           label="Precipitação (mm)"
           outlined
         ></v-text-field>
-        <v-btn
-          class="d-flex mt-n7 ml-4"
-          @click="editing = !editing"
-          fab
-          small
-          color="accent"
-        >
-          <v-icon dark>
-            {{ editing ? 'mdi-check' : 'mdi-pencil' }} 
-          </v-icon>
-        </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -36,8 +25,10 @@ export default {
   },
   data() {
     return {
-      editing: false,
       value: '',
+      rules: [
+        value => !!value || 'Obrigatório.',
+      ],
     }
   }
 };

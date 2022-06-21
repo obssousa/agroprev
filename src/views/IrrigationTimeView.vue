@@ -21,27 +21,32 @@
           v-bind="attrs"
           @click="toast = false"
         >
-          <v-icon dark>
-            mdi-close
-          </v-icon>
+          <v-icon dark> mdi-close </v-icon>
         </v-btn>
       </template>
     </v-snackbar>
     <v-row justify="center" class="mt-6">
       <v-select
-          v-model="selectedSector"
-          :items="getPlantations"
-          label="Setor / Gleba / Talhão"
-          item-text="setor"
-          item-value="id"
-          outlined
-          @change="getPlantationWeather()"
-        ></v-select>
+        v-model="selectedSector"
+        :items="getPlantations"
+        label="Setor / Gleba / Talhão"
+        item-text="setor"
+        item-value="id"
+        :rules="[(v) => !!v || 'Selecione uma plantação']"
+        outlined
+        return-object
+        @change="getPlantationWeather()"
+      ></v-select>
       <v-expansion-panels focusable>
         <v-expansion-panel v-for="(item, i) in fields" :key="i">
           <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
           <v-expansion-panel-content>
-            <component :preciptation.sync="preciptation" :plantation.sync="selectedPlantation" v-bind:is="item.component"></component>
+            <component
+              :preciptation.sync="preciptation"
+              :rules.sync="rules"
+              :plantation.sync="selectedPlantation"
+              v-bind:is="item.component"
+            ></component>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -71,17 +76,18 @@ import { mapGetters, mapActions } from "vuex";
 import time from "@/hooks/time";
 import irrigationTime from "@/hooks/irrigationTime";
 import kcCalc from "@/hooks/kc";
+import probabilitySuccess from "@/hooks/probabilitySuccess";
 
 export default {
   name: "IrrigationTimeView",
   data() {
     return {
-      selectedSector: '',
-      preciptation: '',
+      selectedSector: "",
+      preciptation: "",
       panel: [],
       items: 5,
       toast: false,
-      toastText: '',
+      toastText: "",
       submit: false,
       loading: false,
       fields: [
@@ -98,6 +104,9 @@ export default {
           component: AgrometeorologicalCard,
         },
       ],
+      rules: [
+        value => !!value || 'Item obrigatório.',
+      ],
     };
   },
   computed: {
@@ -105,100 +114,109 @@ export default {
     ...mapGetters("cultures", ["getCultures"]),
     ...mapGetters("info", ["getWeather"]),
     selectedPlantation() {
-      return this.getPlantations.find(x => x.id === this.selectedSector);
+      return this.getPlantations.find((x) => x.id === this.selectedSector);
     },
   },
   methods: {
     ...mapActions({
-      calcADD: 'servagro/calcADD',
-      calcEvoTranspiration: 'servagro/calculateEvoTranspiration',
-      fetchWeather: 'info/fetchWeather',
+      calcADD: "servagro/calcADD",
+      addEstimateTime: "plantations/addEstimateTime",
+      fetchWeather: "info/fetchWeather",
     }),
     getCultureType(name) {
-      return (this.getCultures.find((culture) => culture.name === name)).type;
+      return this.getCultures.find((culture) => culture.name === name).type;
     },
-    calcEstimateTime() {
+    async calcEstimateTime() {
       this.loading = true;
       const temperature = this.getWeather?.temp;
       const payload = {
         today: time.getFormattedDate(time.getToday()),
         plantingDate: time.getFormattedDate(this.selectedPlantation.plantio),
         temperature: Math.round(temperature),
-      }
+      };
 
-      this.calcADD(payload)
-      .then((res) => {
-        const kc = kcCalc(
-          this.getCultureType(this.selectedPlantation.culture), res
-        );
-        const calc = irrigationTime(
-          this.selectedPlantation.betweenLines, 
-          this.selectedPlantation.betweenPlants,
-          this.selectedPlantation.emissors,
-          this.selectedPlantation.flow,
-          this.selectedPlantation.betweenLines * this.selectedPlantation.betweenPlants,
-          this.preciptation,
-          kc,
-          this.selectedPlantation.copeArea);
+      let waterBlade = 0;
 
-        console.log(calc);
-    
-      })
-      .finally(() => { this.loading = false; });
+      await this.calcADD(payload)
+        .then((res) => {
+          const plantation = this.selectedPlantation;
+          const kc = kcCalc(
+            this.getCultureType(this.selectedPlantation.culture),
+            res
+          );
+          probabilitySuccess(
+            plantation.betweenLines * plantation.betweenPlants
+          );
+          waterBlade = irrigationTime(
+            plantation.betweenLines,
+            plantation.betweenPlants,
+            plantation.emissors,
+            plantation.flow,
+            plantation.betweenLines * plantation.betweenPlants,
+            this.preciptation,
+            kc,
+            plantation.copeArea
+          );
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+
+      await this.addEstimateTime(waterBlade);
     },
     async getPlantationWeather() {
       const payload = {
         lat: this.selectedPlantation.location.latitude,
         lon: this.selectedPlantation.location.longitude,
         today: time.getToday() / 1000,
-      }
+      };
 
       await this.fetchWeather(payload)
-      .then(this.submit = true)
-      .catch((err) => {
+        .then((this.submit = true))
+        .catch((err) => {
           this.submit = false;
           this.toast = true;
           this.toastText = `${err.message} - ${err.response.data.message}`;
-      });
-    }
+        });
+    },
   },
 };
 </script>
 <style>
-  .custom-loader {
-    animation: loader 1s infinite;
-    display: flex;
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
   }
-  @-moz-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
   }
-  @-webkit-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
   }
-  @-o-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
   }
-  @keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
   }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>
