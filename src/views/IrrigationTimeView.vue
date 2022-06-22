@@ -114,9 +114,7 @@ export default {
     ...mapGetters("cultures", ["getCultures"]),
     ...mapGetters("info", ["getWeather"]),
     selectedPlantation() {
-      console.log(this.selectedSector);
-      console.log(this.getPlantations);
-      return this.getPlantations.find((x) => x.id === this.selectedSector);
+      return this.getPlantations.find((x) => x.id === this.selectedSector.id);
     },
   },
   methods: {
