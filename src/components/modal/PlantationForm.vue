@@ -23,7 +23,7 @@
             <v-row class="mb-3">
               <v-col
                 v-for="item in plantingSystem"
-                :key="item.title"
+                :key="item.id"
                 cols="12"
                 sm="12"
                 md="4"
@@ -52,7 +52,7 @@
             <v-row>
               <v-col
                 v-for="item in plantingDistance"
-                :key="item.title"
+                :key="item.id"
                 cols="12"
                 sm="12"
                 md="4"
@@ -77,7 +77,7 @@
             <v-row>
               <v-col
                 v-for="item in irrigationSystem"
-                :key="item.title"
+                :key="item.id"
                 cols="12"
                 sm="12"
                 md="4"
@@ -234,6 +234,7 @@ export default {
   methods: {
     ...mapActions({
       createPlantation: "plantations/createPlantation",
+      editPlantation: "plantations/editPlantation",
     }),
     initialize() {
       this.plantingSystem[0].value = this.plantation.setor;
@@ -246,6 +247,10 @@ export default {
       this.irrigationSystem[1].value = this.plantation.flow;
       this.irrigationSystem[2].value = this.plantation.irrigationType;
       this.irrigationSystem[3].value = this.plantation.efficiency;
+      this.locationData.marker.position.lat = this.plantation.location.latitude;
+      this.locationData.center.lat = this.plantation.location.latitude;
+      this.locationData.marker.position.lng = this.plantation.location.longitude;
+      this.locationData.center.lng = this.plantation.location.longitude;
     },
     savePlantation() {
       let formData = {};
@@ -258,12 +263,18 @@ export default {
 
       formData.location = location;
 
-      this.createPlantation(formData);
+      if(this.plantation.id) { 
+        formData.id = this.plantation.id;
+        this.editPlantation(formData);
+      } else {
+        this.createPlantation(formData);
+      }
+
       this.$emit("close");
     },
     geolocate() {
       navigator.geolocation.getCurrentPosition((position) => {
-        this.marker.position = {
+        this.locationData.marker.position = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
@@ -272,16 +283,16 @@ export default {
     },
     //sets the position of marker when dragged
     handleMarkerDrag(e) {
-      this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+      this.locationData.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
     },
     //Moves the map view port to marker
     panToMarker() {
-      this.$refs.mapRef.panTo(this.marker.position);
+      this.$refs.mapRef.panTo(this.locationData.marker.position);
       this.$refs.mapRef.setZoom(18);
     },
     //Moves the marker to click position on the map
     handleMapClick(e) {
-      this.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+      this.locationData.marker.position = { lat: e.latLng.lat(), lng: e.latLng.lng() };
       console.log(e);
     },
   },

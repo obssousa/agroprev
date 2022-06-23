@@ -1,8 +1,8 @@
 <template>
   <v-sheet>
     <v-card class="card-parent d-flex justify-space-between">
-      <PlantationTable @editItem="editItem" @deleteItem="openDeleteDialog" />
-      <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="showModal = false" />
+      <PlantationTable :plantations="getPlantations" @editItem="editItem" @deleteItem="openDeleteDialog" :key="tableUpdate" />
+      <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="forceUpdateTable" />
     </v-card>
     <v-fab-transition>
       <v-btn
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import PlantationForm from "@/components/modal/PlantationForm.vue";
 import PlantationTable from "@/components/tables/PlantationTable.vue";
 
@@ -41,10 +41,14 @@ export default {
     plantation: {},
     showModal: false,
     dialogDelete: false,
+    tableUpdate: 0,
   }),
   components: {
     PlantationForm,
     PlantationTable,
+  },
+  computed: {
+    ...mapGetters("plantations", ["getPlantations"]),
   },
   methods: {
     ...mapActions({
@@ -56,11 +60,15 @@ export default {
     },
     editItem(item) {
       this.plantation = item;
-      this.showModal = true;
+      this.showModal = true;  
     },
     openDeleteDialog(item) {
       this.plantation = item;
       this.dialogDelete = true;
+    },
+    forceUpdateTable() {
+      this.tableUpdate += 1;
+      this.showModal = false;  
     },
     deleteItem(item) {
       this.deletePlantation(item).finally(this.dialogDelete = false);

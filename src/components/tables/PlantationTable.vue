@@ -2,8 +2,7 @@
   <v-data-table
     class="plantationTable"
     :headers="headers"
-    :items="getPlantations"
-    :item-key="itemKey"
+    :items="plantations"
     :expanded.sync="expanded"
     show-expand
   >
@@ -57,9 +56,13 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-
 export default {
+  props: {
+     plantations: {
+       type: Array,
+       default: () => []
+     }
+  },
   name: "PlantationTable",
   data: () => ({
     max25chars: (v) => v.length <= 25 || "Input too long!",
@@ -84,12 +87,7 @@ export default {
       { text: '', value: 'actions', sortable: false },
     ],
   }),
-  computed: {
-    ...mapGetters("plantations", ["getPlantations"]),
-    itemKey() {
-      return this.headers[0]?.value;
-    },
-  },
+  
   // created() {
   //   this.$refs.gmap.clientWidth = this.headers.length;
   // },
