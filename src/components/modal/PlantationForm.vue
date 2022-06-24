@@ -290,11 +290,11 @@ export default {
 
         formData.location = location;
 
-        if(this.plantation.id) { 
+        if(!Object.hasOwn(this.plantation, 'id')) { 
+          this.createPlantation(formData);
+        } else {
           formData.id = this.plantation.id;
           this.editPlantation(formData);
-        } else {
-          this.createPlantation(formData);
         }
 
         this.$emit("close");
