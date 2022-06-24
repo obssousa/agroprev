@@ -1,5 +1,9 @@
 <template>
   <v-container>
+    <v-form
+      ref="form"
+      v-model="valid"
+    >
     <v-snackbar
       centered
       v-model="toast"
@@ -49,6 +53,25 @@
             ></component>
           </v-expansion-panel-content>
         </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header>{{ 'Informação de Preciptação' }}</v-expansion-panel-header>
+          <v-expansion-panel-content>
+          <v-container class="text-center">
+            <v-row class="mt-2 mb-n8" dense>
+              <v-col cols="12" lg="3" md="4" sm="6">
+                <div class="d-flex align-center">
+                <v-text-field
+                  v-model="preciptation"
+                  :rules="rules"
+                  label="Precipitação (mm)"
+                  outlined
+                ></v-text-field>
+                </div>
+              </v-col>
+            </v-row>
+          </v-container>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panels>
       <v-btn
         class="ma-2 mt-6"
@@ -65,13 +88,23 @@
         </template>
       </v-btn>
     </v-row>
+    <v-dialog v-model="showSuccess" max-width="500px">
+      <v-card>
+        <v-card-title>Lâmina calculada com sucesso</v-card-title>
+        <v-card-text>Estimativa de {{ waterBlade }}</v-card-text>
+        <v-card-text>O historico pode ser consultado na seção de Lâminas de Irrigação</v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" text @click="showSuccess = false">Entendido</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    </v-form>
   </v-container>
 </template>
 
 <script>
 import PlantationInfoCard from "@/components/cards/irrigation/PlantationInfoCard.vue";
 import IrrigationSystemCard from "@/components/cards/irrigation/IrrigationSystemCard.vue";
-import AgrometeorologicalCard from "@/components/cards/irrigation/AgrometeorologicalCard.vue";
 import { mapGetters, mapActions } from "vuex";
 import time from "@/hooks/time";
 import irrigationTime from "@/hooks/irrigationTime";
@@ -84,11 +117,14 @@ export default {
     return {
       selectedSector: "",
       preciptation: "",
+      showSuccess: false,
+      waterBlade: 0,
+      valid: false,
       panel: [],
       items: 5,
       toast: false,
       toastText: "",
-      submit: false,
+      submit: true,
       loading: false,
       fields: [
         {
@@ -98,10 +134,6 @@ export default {
         {
           title: "Sistema de Irrigação",
           component: IrrigationSystemCard,
-        },
-        {
-          title: "Informações Agrometereológicas",
-          component: AgrometeorologicalCard,
         },
       ],
       rules: [
@@ -127,42 +159,51 @@ export default {
       return this.getCultures.find((culture) => culture.name === name).type;
     },
     async calcEstimateTime() {
-      this.loading = true;
-      const temperature = this.getWeather?.temp;
-      const payload = {
-        today: time.getFormattedDate(time.getToday()),
-        plantingDate: time.getFormattedDate(this.selectedPlantation.plantio),
-        temperature: Math.round(temperature),
-      };
+      if(this.$refs.form.validate()) {
+        this.loading = true;
+        const temperature = this.getWeather?.temp;
+        const payload = {
+          today: time.getFormattedDate(time.getToday()),
+          plantingDate: time.getFormattedDate(this.selectedPlantation.plantio),
+          temperature: Math.round(temperature),
+        };
 
-      let waterBlade = 0;
+        await this.calcADD(payload)
+          .then((res) => {
+            const plantation = this.selectedPlantation;
+            const kc = kcCalc(
+              this.getCultureType(this.selectedPlantation.culture),
+              res
+            );
+            probabilitySuccess(
+              plantation.betweenLines * plantation.betweenPlants
+            );
+            this.waterBlade = irrigationTime(
+              plantation.betweenLines,
+              plantation.betweenPlants,
+              plantation.emissors,
+              plantation.flow,
+              plantation.betweenLines * plantation.betweenPlants,
+              this.preciptation,
+              kc,
+              plantation.copeArea,
+              plantation.efficiency
+            );
+          })
+          .finally(() => {
+            this.loading = false;
+          });
 
-      await this.calcADD(payload)
-        .then((res) => {
-          const plantation = this.selectedPlantation;
-          const kc = kcCalc(
-            this.getCultureType(this.selectedPlantation.culture),
-            res
-          );
-          probabilitySuccess(
-            plantation.betweenLines * plantation.betweenPlants
-          );
-          waterBlade = irrigationTime(
-            plantation.betweenLines,
-            plantation.betweenPlants,
-            plantation.emissors,
-            plantation.flow,
-            plantation.betweenLines * plantation.betweenPlants,
-            this.preciptation,
-            kc,
-            plantation.copeArea
-          );
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-
-      await this.addEstimateTime(waterBlade);
+        await this.addEstimateTime({
+            plantation: this.selectedPlantation.setor,
+            estimative: this.waterBlade,
+            startDate: time.getToday(),
+            plantationDate: this.selectedPlantation.plantio,
+            preciptation: this.preciptation,
+          }).then(() => {
+            this.showSuccess = true;
+          });
+      }
     },
     async getPlantationWeather() {
       const payload = {
@@ -172,7 +213,6 @@ export default {
       };
 
       await this.fetchWeather(payload)
-        .then((this.submit = true))
         .catch((err) => {
           this.submit = false;
           this.toast = true;

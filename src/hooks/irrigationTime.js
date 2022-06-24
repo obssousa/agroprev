@@ -25,7 +25,7 @@ const calcKl = (AT, fc) => {
 // 𝐾𝑙 is location coefficient, a decimal value;
 // 𝑛 is the number of emitters;
 // 𝑞 is the outflow of the emitter, in liters per hour 𝐿/h;
-const calc = (E1, E2, n, q, AT, ETo, Kc, fc) => {
+const calc = (E1, E2, n, q, AT, ETo, Kc, fc, Ea) => {
 
     let Kl = calcKl(AT, fc);
     // amount of rainfall that can be measured by a rain gauge and crop evapotranspiration
@@ -37,7 +37,7 @@ const calc = (E1, E2, n, q, AT, ETo, Kc, fc) => {
     const Rp = '1'; // is the 𝐸𝑇𝑐 replacement according to treatment ?
 
     // é a eficiência de aplicação do tipo de sistema de irrigação utilizado
-    const Ea = '1'; //  considera-se 100%, mas pode ser maior
+    // const Ea = '1'; //  considera-se 100%, mas pode ser maior
     
     let a = { ETc, Rp, E1, E2, Kl };
     let b = { n, q, Ea };

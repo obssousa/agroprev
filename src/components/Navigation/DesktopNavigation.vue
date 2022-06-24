@@ -41,6 +41,11 @@ export default {
           icon: "mdi-sprinkler-variant",
           route: "/irrigation",
         },
+        {
+          title: "Lâminas de Irrigação",
+          icon: "mdi-water-check",
+          route: "/blade",
+        },
         { title: "Sobre", icon: "mdi-information", route: "/about" },
       ],
     };

@@ -6,6 +6,10 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
+    <v-form
+      ref="form"
+      v-model="valid"
+    >
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="$emit('close')">
@@ -76,7 +80,7 @@
           <v-list three-line subheader>
             <v-row>
               <v-col
-                v-for="item in irrigationSystem"
+                v-for="(item, index) in irrigationSystem"
                 :key="item.id"
                 cols="12"
                 sm="12"
@@ -85,7 +89,15 @@
                 <v-list-item class="mb-n10">
                   <v-list-item-content>
                     <v-text-field
-                      v-if="item.id !== 'irrigationType'"
+                      v-if="item.id !== 'irrigationType' && item.id ==='efficiency'"
+                      v-model="item.value"
+                      :rules="efficiencyRules"
+                      :type="item.type"
+                      :step="'0.1'"
+                      :label="item.title"
+                    ></v-text-field>
+                    <v-text-field
+                      v-if="item.id !== 'irrigationType' && item.id !=='efficiency'"
                       v-model="item.value"
                       :rules="rules"
                       :type="item.type"
@@ -95,7 +107,9 @@
                       v-model="item.value"
                       v-if="item.id === 'irrigationType'"
                       :items="PlantationTypes"
+                      item-text="name"
                       :label="item.title"
+                      @change="setEfficiency(index, item.value)"
                     ></v-select>
                   </v-list-item-content>
                 </v-list-item>
@@ -124,6 +138,7 @@
           </v-container>
         </v-card-text>
       </v-card>
+    </v-form>
     </v-dialog>
   </div>
 </template>
@@ -143,6 +158,7 @@ export default {
   data() {
     return {
       title: "Cadastro de Novo Plantio",
+      valid: false,
       plantingSystem: [
         {
           title: "Setor, Gleba ou Talhão",
@@ -212,8 +228,13 @@ export default {
         center: { lat: -8.05428, lng: -34.8813 },
       },
       rules: [
-        value => !!value || 'Required.',
+        value => !!value || 'Item obrigatório.',
       ],
+      efficiencyRules: [ 
+        v => !!v || "Item obrigatório",
+        v => ( v && v >= 0 ) || "Valor minimo é 0.",
+        v => ( v && v <= 1 ) || "Valor máximo é 1.",
+    ],
       PlantationTypes,
     };
   },
@@ -237,40 +258,47 @@ export default {
       editPlantation: "plantations/editPlantation",
     }),
     initialize() {
-      this.plantingSystem[0].value = this.plantation.setor;
-      this.plantingSystem[1].value = this.plantation.plantio;
-      this.plantingSystem[2].value = this.plantation.culture;
-      this.plantingSystem[3].value = this.plantation.copeArea;
-      this.plantingDistance[0].value = this.plantation.betweenPlants;
-      this.plantingDistance[1].value = this.plantation.betweenLines;
-      this.irrigationSystem[0].value = this.plantation.emissors;
-      this.irrigationSystem[1].value = this.plantation.flow;
-      this.irrigationSystem[2].value = this.plantation.irrigationType;
-      this.irrigationSystem[3].value = this.plantation.efficiency;
-      this.locationData.marker.position.lat = this.plantation.location.latitude;
-      this.locationData.center.lat = this.plantation.location.latitude;
-      this.locationData.marker.position.lng = this.plantation.location.longitude;
-      this.locationData.center.lng = this.plantation.location.longitude;
+      if(Object.keys(this.plantation).length > 0) {
+        this.plantingSystem[0].value = this.plantation.setor;
+        this.plantingSystem[1].value = this.plantation.plantio;
+        this.plantingSystem[2].value = this.plantation.culture;
+        this.plantingSystem[3].value = this.plantation.copeArea;
+        this.plantingDistance[0].value = this.plantation.betweenPlants;
+        this.plantingDistance[1].value = this.plantation.betweenLines;
+        this.irrigationSystem[0].value = this.plantation.emissors;
+        this.irrigationSystem[1].value = this.plantation.flow;
+        this.irrigationSystem[2].value = this.plantation.irrigationType;
+        this.irrigationSystem[3].value = this.plantation.efficiency;
+        this.locationData.marker.position.lat = this.plantation.location.latitude;
+        this.locationData.center.lat = this.plantation.location.latitude;
+        this.locationData.marker.position.lng = this.plantation.location.longitude;
+        this.locationData.center.lng = this.plantation.location.longitude;
+      }
+    },
+    setEfficiency(index, item) {
+      this.irrigationSystem[index + 1].value = PlantationTypes.find((type) => type.name === item).efficiency;
     },
     savePlantation() {
-      let formData = {};
-      let location = { latitude: this.locationData.marker.position.lat, longitude: this.locationData.marker.position.lng };
-      let allData = this.plantingSystem.concat(this.plantingDistance, this.irrigationSystem);
+      if(this.$refs.form.validate()) {
+        let formData = {};
+        let location = { latitude: this.locationData.marker.position.lat, longitude: this.locationData.marker.position.lng };
+        let allData = this.plantingSystem.concat(this.plantingDistance, this.irrigationSystem);
 
-      allData.forEach((question) => {
-        formData[question.id] = question.value;
-      });
+        allData.forEach((question) => {
+          formData[question.id] = question.value;
+        });
 
-      formData.location = location;
+        formData.location = location;
 
-      if(this.plantation.id) { 
-        formData.id = this.plantation.id;
-        this.editPlantation(formData);
-      } else {
-        this.createPlantation(formData);
+        if(this.plantation.id) { 
+          formData.id = this.plantation.id;
+          this.editPlantation(formData);
+        } else {
+          this.createPlantation(formData);
+        }
+
+        this.$emit("close");
       }
-
-      this.$emit("close");
     },
     geolocate() {
       navigator.geolocation.getCurrentPosition((position) => {

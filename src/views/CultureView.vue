@@ -18,7 +18,6 @@
           <v-divider :color="$vuetify.theme.dark ? 'primary' : 'accent'" class="mx-4"></v-divider>
 
           <v-card-text>
-              <v-chip :class="$vuetify.theme.dark ? 'elevation-3 black--text' : 'elevation-3 white--text'" :color="$vuetify.theme.dark ? 'text' : 'primary'">Coeficiente: {{ item.coefficient }} </v-chip>
           </v-card-text>
         </div>
       </v-card>

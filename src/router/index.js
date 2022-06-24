@@ -4,6 +4,7 @@ import AboutView from '@/views/AboutView'
 import CultureView from '@/views/CultureView'
 import IrrigationTimeView from '@/views/IrrigationTimeView'
 import PlantationInfoView from '@/views/PlantationInfoView'
+import WaterBladeView from '@/views/WaterBladeView'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/irrigation',
     name: 'Estimativa de Irrigação',
     component: IrrigationTimeView
+  },
+  {
+    path: '/blade',
+    name: 'Lâminas de Irrigação',
+    component: WaterBladeView
   },
 ]
 

@@ -20,7 +20,7 @@ const mutations = {
         state.plantations.splice(index, 1);
     },
     addEstimateTime(state, item) {
-        const blade = { item }
+        const blade = item
         if(state.waterBlades.length){
             blade.id = state.waterBlades[state.waterBlades.length - 1].id + 1
         } else {

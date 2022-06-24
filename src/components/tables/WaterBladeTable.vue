@@ -1,0 +1,100 @@
+<template>
+  <v-data-table
+    class="bladeTable"
+    :headers="headers"
+    :items="blades"
+    :expanded.sync="expanded"
+    :search="search"
+    show-expand
+  >
+    <template v-slot:top>
+      <v-toolbar flat>
+        <v-toolbar-title> {{ "Histórico de Lâminas de Irrigação" }} </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-if="search"
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Procurar"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-toolbar>
+      <v-text-field
+          v-model="search"
+          label="Procurar"
+          class="mx-4"
+        ></v-text-field>
+    </template>
+    <template v-slot:[`item.plantationDate`]="{ item }">
+      {{ getUsuallyDate(item.plantationDate) }}
+    </template>
+    <template v-slot:[`item.startDate`]="{ item }">
+      {{ getUsuallyDate(item.startDate) }}
+    </template>
+  </v-data-table>
+</template>
+
+<script>
+export default {
+  props: {
+     blades: {
+       type: Array,
+       default: () => []
+     }
+  },
+  name: "WaterBladeTable",
+  data: () => ({
+    expanded: [],
+    search: "",
+    headers: [
+      {
+        text: "Plantação",
+        align: "start",
+        sortable: false,
+        value: "plantation",
+      },
+      {
+        text: "Data de Estimativa",
+        value: "startDate",
+      },
+      { text: "Data de Plantio", value: "plantationDate" },
+      { text: "Precipitação (mm)", value: "preciptation" },
+      { text: "Estimativa", value: "estimative" },
+    ],
+  }),
+  methods: {
+    getUsuallyDate(period) {
+      const date = new Date(period);
+      date.setMonth(date.getMonth(), date.getDate());
+      const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+      var day = date.getDate().toString().padStart(2,0);
+      var month = months[date.getMonth()];
+      var year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  },
+}
+</script>
+<style lang="scss">
+
+.bladeTable {
+  width: -webkit-fill-available;
+
+  table {
+    width: fit-content;
+  }
+
+  .expanded-td {
+    padding: 0px !important;
+    padding-right: 100px;
+    padding-bottom: 20px !important;
+    white-space: nowrap !important;
+    width: 1% !important;
+  }
+}
+.vue-map-container {
+  width: auto;
+  height: 400px;
+}
+</style>
