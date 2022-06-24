@@ -3,9 +3,7 @@
     class="bladeTable"
     :headers="headers"
     :items="blades"
-    :expanded.sync="expanded"
     :search="search"
-    show-expand
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -26,6 +24,9 @@
           class="mx-4"
         ></v-text-field>
     </template>
+    <template v-slot:[`item.estimative`]="{ item }">
+      {{ hoursConverter(item.estimative) }}
+    </template>
     <template v-slot:[`item.plantationDate`]="{ item }">
       {{ getUsuallyDate(item.plantationDate) }}
     </template>
@@ -36,6 +37,7 @@
 </template>
 
 <script>
+import time from "@/hooks/time"
 export default {
   props: {
      blades: {
@@ -60,19 +62,22 @@ export default {
       },
       { text: "Data de Plantio", value: "plantationDate" },
       { text: "Precipitação (mm)", value: "preciptation" },
-      { text: "Estimativa", value: "estimative" },
+      { text: "Estimativa Diária", value: "estimative" },
     ],
   }),
   methods: {
+    hoursConverter(hour) {
+      return time.hoursConverter(hour);
+    },
     getUsuallyDate(period) {
       const date = new Date(period);
       date.setMonth(date.getMonth(), date.getDate());
       const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-      var day = date.getDate().toString().padStart(2,0);
-      var month = months[date.getMonth()];
-      var year = date.getFullYear();
+      let day = date.getDate().toString().padStart(2,0);
+      let month = months[date.getMonth()];
+      let year = date.getFullYear();
       return `${day}/${month}/${year}`;
-    }
+    },
   },
 }
 </script>

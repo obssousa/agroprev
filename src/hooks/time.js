@@ -25,10 +25,22 @@ const getFormattedDate = (period) => {
   return `${day}${month}${year}`;
 }
 
+const hoursConverter = (num) => { 
+      let hours = num;
+      let rhours = Math.floor(hours);
+      let minutes = (hours - rhours) * 60;
+      let rminutes = Math.round(minutes);
+      let lminutes = Math.floor(minutes);
+      let seconds = (minutes - lminutes) * 60;
+      let rseconds = Math.round(seconds);
+      return rhours + " hora(s), " + rminutes + " minuto(s) e " + rseconds + " segundo(s).";  
+}
+
 const methods = {
   getToday,
   getFormattedDate,
-  getPreviousDay
+  getPreviousDay,
+  hoursConverter
 }
 
 export default methods;

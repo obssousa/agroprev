@@ -47,6 +47,7 @@ const calc = (E1, E2, n, q, AT, ETo, Kc, fc, Ea) => {
 
     let ti = { a, b };
 
+    // retorn tempo de irrigação em horas.
     return evaluate('a * b', ti);
 }
 

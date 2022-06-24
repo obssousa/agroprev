@@ -91,7 +91,7 @@
     <v-dialog v-model="showSuccess" max-width="500px">
       <v-card>
         <v-card-title>Lâmina calculada com sucesso</v-card-title>
-        <v-card-text>Estimativa de {{ waterBlade }}</v-card-text>
+        <v-card-text>Estimativa de {{ hoursConverter(waterBlade) }}</v-card-text>
         <v-card-text>O historico pode ser consultado na seção de Lâminas de Irrigação</v-card-text>
         <v-card-actions>
           <v-btn color="primary" text @click="showSuccess = false">Entendido</v-btn>
@@ -218,6 +218,9 @@ export default {
           this.toast = true;
           this.toastText = `${err.message} - ${err.response.data.message}`;
         });
+    },
+    hoursConverter(hour) {
+      return time.hoursConverter(hour);
     },
   },
 };
