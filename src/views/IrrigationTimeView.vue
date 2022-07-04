@@ -33,7 +33,7 @@
       <v-select
         v-model="selectedSector"
         :items="getPlantations"
-        label="Setor / Gleba / Talhão"
+        label="Plantio"
         item-text="setor"
         item-value="id"
         :rules="[(v) => !!v || 'Selecione uma plantação']"
@@ -53,17 +53,20 @@
             ></component>
           </v-expansion-panel-content>
         </v-expansion-panel>
+      </v-expansion-panels>
+      <v-expansion-panels  v-model="panel" readonly multiple>
         <v-expansion-panel>
-          <v-expansion-panel-header>{{ 'Informação de Preciptação' }}</v-expansion-panel-header>
+          <v-expansion-panel-header>{{ 'Informação de Evotranspiração' }}</v-expansion-panel-header>
           <v-expansion-panel-content>
           <v-container class="text-center">
-            <v-row class="mt-2 mb-n8" dense>
+            <v-row class="mb-n8" dense>
               <v-col cols="12" lg="3" md="4" sm="6">
                 <div class="d-flex align-center">
                 <v-text-field
+                  readonly
                   v-model="preciptation"
                   :rules="rules"
-                  label="Precipitação (mm)"
+                  label="Evotranspiração (mm)"
                   outlined
                 ></v-text-field>
                 </div>
@@ -109,6 +112,7 @@ import { mapGetters, mapActions } from "vuex";
 import time from "@/hooks/time";
 import irrigationTime from "@/hooks/irrigationTime";
 import kcCalc from "@/hooks/kc";
+import eToCalc from "@/hooks/eto";
 import probabilitySuccess from "@/hooks/probabilitySuccess";
 
 export default {
@@ -120,7 +124,7 @@ export default {
       showSuccess: false,
       waterBlade: 0,
       valid: false,
-      panel: [],
+      panel: [0],
       items: 5,
       toast: false,
       toastText: "",
@@ -144,7 +148,7 @@ export default {
   computed: {
     ...mapGetters("plantations", ["getPlantations"]),
     ...mapGetters("cultures", ["getCultures"]),
-    ...mapGetters("info", ["getWeather"]),
+    ...mapGetters("info", ["getWeather", "getSolar"]),
     selectedPlantation() {
       return this.getPlantations.find((x) => x.id === this.selectedSector.id);
     },
@@ -154,6 +158,7 @@ export default {
       calcADD: "servagro/calcADD",
       addEstimateTime: "plantations/addEstimateTime",
       fetchWeather: "info/fetchWeather",
+      fetchSolarData: "info/fetchSolarData",
     }),
     getCultureType(name) {
       return this.getCultures.find((culture) => culture.name === name).type;
@@ -161,7 +166,7 @@ export default {
     async calcEstimateTime() {
       if(this.$refs.form.validate()) {
         this.loading = true;
-        const temperature = this.getWeather?.temp;
+        const temperature = this.getWeather?.main.temp;
         const payload = {
           today: time.getFormattedDate(time.getToday()),
           plantingDate: time.getFormattedDate(this.selectedPlantation.plantio),
@@ -206,6 +211,7 @@ export default {
       }
     },
     async getPlantationWeather() {
+      this.submit = false;
       const payload = {
         lat: this.selectedPlantation.location.latitude,
         lon: this.selectedPlantation.location.longitude,
@@ -213,6 +219,21 @@ export default {
       };
 
       await this.fetchWeather(payload)
+        .catch((err) => {
+          this.submit = false;
+          this.toast = true;
+          this.toastText = `${err.message} - ${err.response.data.message}`;
+        });
+
+      await this.fetchSolarData(payload)
+        .then(() => {
+          const temperature = this.getWeather?.main.temp;
+          const minTemperature = this.getWeather?.main.temp_min;
+          const maxTemperature = this.getWeather?.main.temp_max;
+          const eTO = eToCalc(this.getSolar?.solarradiation, temperature, maxTemperature, minTemperature);
+          this.preciptation = eTO;
+          this.submit = true;
+        })
         .catch((err) => {
           this.submit = false;
           this.toast = true;

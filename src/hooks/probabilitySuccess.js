@@ -2,7 +2,6 @@ import waterBlades from '@/constants/waterBlade';
 import { evaluate } from 'mathjs';
 
 const noRainFall = ((area) => {
-    console.log(area);
     const dias = 30;
     const cisterna = 16147200;
     const laminas = waterBlades;
