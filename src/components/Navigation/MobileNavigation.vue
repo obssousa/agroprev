@@ -63,7 +63,7 @@ export default {
           route: "/irrigation",
         },
         {
-          title: "Lâminas de Irrigação",
+          title: "Histórico de Irrigação",
           icon: "mdi-water-check",
           route: "/blade",
         },
