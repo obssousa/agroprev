@@ -48,6 +48,10 @@ Vue.use(GmapVue, gmapOptions);
 
 Vue.config.productionTip = false
 
+Vue.nextTick(() => {
+  document.title = 'Agroprev';
+});
+
 new Vue({
   router,
   store,
