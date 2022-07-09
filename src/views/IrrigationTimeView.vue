@@ -242,7 +242,7 @@ export default {
           const maxTemperature = this.getWeather?.main.temp_max;
           const eTO = eToCalc(this.getSolar?.solarradiation, temperature, maxTemperature, minTemperature);
           this.evapotranspiration = eTO;
-          this.preciptation = this.getSolar?.precip;
+          this.preciptation = this.getSolar?.precip * 25.4;
           this.submit = true;
         })
         .catch((err) => {
