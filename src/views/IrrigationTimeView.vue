@@ -56,21 +56,13 @@
       </v-expansion-panels>
       <v-expansion-panels  v-model="panel" readonly multiple>
         <v-expansion-panel>
-          <v-expansion-panel-header>{{ 'Informação Meterologica' }}</v-expansion-panel-header>
+          <v-expansion-panel-header>{{ 'Informação Meterológica' }}</v-expansion-panel-header>
           <v-expansion-panel-content>
           <v-container class="text-center">
             <v-row class="mb-n8" dense>
               <v-col cols="12" lg="3" md="4" sm="6">
                 <div class="d-flex align-center">
                 <v-text-field
-                  readonly
-                  v-model="evapotranspiration"
-                  :rules="rules"
-                  label="Evotranspiração"
-                  outlined
-                ></v-text-field>
-                <v-text-field
-                  class="ml-5"
                   v-model="preciptation"
                   :rules="rules"
                   label="Preciptação (mm)"
