@@ -9,7 +9,8 @@ const getToday = () => {
 const getPreviousDay = () => {
 
   const today = new Date();
-  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+  let startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  startOfDay = startOfDay.setDate(today.getDate() - 3);
 
   return startOfDay;
 }

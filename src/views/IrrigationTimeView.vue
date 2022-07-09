@@ -46,7 +46,7 @@
           <v-expansion-panel-header>{{ item.title }}</v-expansion-panel-header>
           <v-expansion-panel-content>
             <component
-              :preciptation.sync="preciptation"
+              :evapotranspiration.sync="evapotranspiration"
               :rules.sync="rules"
               :plantation.sync="selectedPlantation"
               v-bind:is="item.component"
@@ -56,7 +56,7 @@
       </v-expansion-panels>
       <v-expansion-panels  v-model="panel" readonly multiple>
         <v-expansion-panel>
-          <v-expansion-panel-header>{{ 'Informação de Evotranspiração' }}</v-expansion-panel-header>
+          <v-expansion-panel-header>{{ 'Informação Meterologica' }}</v-expansion-panel-header>
           <v-expansion-panel-content>
           <v-container class="text-center">
             <v-row class="mb-n8" dense>
@@ -64,9 +64,16 @@
                 <div class="d-flex align-center">
                 <v-text-field
                   readonly
+                  v-model="evapotranspiration"
+                  :rules="rules"
+                  label="Evotranspiração"
+                  outlined
+                ></v-text-field>
+                <v-text-field
+                  class="ml-5"
                   v-model="preciptation"
                   :rules="rules"
-                  label="Evotranspiração (mm)"
+                  label="Preciptação (mm)"
                   outlined
                 ></v-text-field>
                 </div>
@@ -120,6 +127,7 @@ export default {
   data() {
     return {
       selectedSector: "",
+      evapotranspiration: "",
       preciptation: "",
       showSuccess: false,
       waterBlade: 0,
@@ -189,10 +197,11 @@ export default {
               plantation.emissors,
               plantation.flow,
               plantation.betweenLines * plantation.betweenPlants,
-              this.preciptation,
+              this.evapotranspiration,
               kc,
               plantation.copeArea,
-              plantation.efficiency
+              plantation.efficiency,
+              this.preciptation,
             );
           })
           .finally(() => {
@@ -204,6 +213,7 @@ export default {
             estimative: this.waterBlade,
             startDate: time.getToday(),
             plantationDate: this.selectedPlantation.plantio,
+            evapotranspiration: this.evapotranspiration,
             preciptation: this.preciptation,
           }).then(() => {
             this.showSuccess = true;
@@ -231,7 +241,8 @@ export default {
           const minTemperature = this.getWeather?.main.temp_min;
           const maxTemperature = this.getWeather?.main.temp_max;
           const eTO = eToCalc(this.getSolar?.solarradiation, temperature, maxTemperature, minTemperature);
-          this.preciptation = eTO;
+          this.evapotranspiration = eTO;
+          this.preciptation = this.getSolar?.precip;
           this.submit = true;
         })
         .catch((err) => {

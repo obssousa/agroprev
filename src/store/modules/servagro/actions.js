@@ -5,18 +5,20 @@ const actions = {
         commit('saveDailyModel', item);
     },
     createInterpolation({ commit }, payload) {
-        const url = '/interpolacao/' + payload.latitude + '/' + payload.longitude
-            + '/' + payload.data;
-        axios.get(url)
-            .then((data) => {
-                commit('saveInterpolation', data);
-                return data;
-            })
-            .catch((err) => {
-                return err;
-            })
+        const url = 'https://shrouded-badlands-78358.herokuapp.com/https://servagro2.augustobrandao.repl.co/interpolacao/' + payload.lat + '/' + payload.lon
+            + '/' + payload.today;
+        return new Promise((resolve, reject) => {
+            axios.get(url)
+                .then((data) => {
+                    commit('saveInterpolation', data.data);
+                    resolve(data.data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        })
     },
-    calcADD({ commit }, payload) {
+    calcADD({ commit }, payload) { 
         const url = 'https://shrouded-badlands-78358.herokuapp.com/https://servagro2.augustobrandao.repl.co/add/' + payload.temperature + '/' + payload.plantingDate
             + '/' + payload.today + '/';
         return new Promise((resolve, reject) => {
@@ -29,17 +31,6 @@ const actions = {
                 reject(err);
             })
         })
-    },
-    calculateEvoTranspiration({ commit }, payload) {
-        const url = 'https://shrouded-badlands-78358.herokuapp.com/http://app.deinfo.ufrpe.br/calculoEvapotranspiracao/';
-        axios.get(url, { payload })
-            .then((data) => {
-                commit('saveEvoTranspiration', data);
-                return data;
-            })
-            .catch((err) => {
-                return err;
-            })
     },
 }
 

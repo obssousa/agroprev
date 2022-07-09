@@ -61,6 +61,7 @@ export default {
         value: "startDate",
       },
       { text: "Data de Plantio", value: "plantationDate" },
+      { text: "Evapotranspiração", value: "evapotranspiration" },
       { text: "Precipitação (mm)", value: "preciptation" },
       { text: "Estimativa Diária", value: "estimative" },
     ],
