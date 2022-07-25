@@ -4,6 +4,13 @@
     :headers="headers"
     :items="blades"
     :search="search"
+    :header-props="{
+      'sortByText': 'Ordenar por'
+      }"
+    :footer-props="{
+        showFirstLastPage: true,
+        'items-per-page-text':'Produtos por página'
+      }"
   >
     <template v-slot:top>
       <v-toolbar flat>

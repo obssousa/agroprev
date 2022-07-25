@@ -6,6 +6,10 @@
     :expanded.sync="expanded"
     show-expand
     :search="search"
+    :footer-props="{
+        showFirstLastPage: true,
+        'items-per-page-text':'Produtos por página'
+      }"
   >
     <template v-slot:top>
         <v-row>
