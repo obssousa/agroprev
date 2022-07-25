@@ -15,9 +15,9 @@ const calcKl = (AT, fc) => {
         fc,
         AT
     };
-    var fw = evaluate('fc * AT', solve)
+    var fw = evaluate('fc / AT', solve)
 
-    return evaluate(`sqrt(${fw})`);
+    return evaluate(`0.1 * (${fw}^(0.5))`);
 }
 
 // 𝐸1 is the spacing between crop rows, in meters; 

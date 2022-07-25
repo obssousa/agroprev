@@ -22,13 +22,13 @@
           <v-col class="d-none d-md-block text-right">
             <v-spacer class="d-none d-md-block"></v-spacer>
             <v-btn @click="$emit('openModal')" class="mt-md-3 mr-md-4" rounded color="primary">
-              Cadastra novo plantio
+              Cadastrar novo plantio
               <v-icon right> mdi-plus-circle </v-icon>
             </v-btn>
           </v-col>
           <v-col class="d-md-none text-center">
             <v-btn @click="$emit('openModal')" class="mt-md-3 mr-md-2" rounded color="primary">
-              Cadastra novo plantio
+              Cadastrar novo plantio
               <v-icon right> mdi-plus-circle </v-icon>
             </v-btn>
           </v-col>
