@@ -233,7 +233,7 @@ export default {
       efficiencyRules: [ 
         v => !!v || "Item obrigatório",
         v => ( v && v >= 0 ) || "Valor minimo é 0.",
-        v => ( v && v <= 1 ) || "Valor máximo é 1.",
+        v => ( v && v <= 100 ) || "Valor máximo é 100.",
     ],
       PlantationTypes,
     };
@@ -276,16 +276,17 @@ export default {
       }
     },
     setEfficiency(index, item) {
-      this.irrigationSystem[index + 1].value = PlantationTypes.find((type) => type.name === item).efficiency;
+      this.irrigationSystem[index + 1].value = Number(PlantationTypes.find((type) => type.name === item).efficiency * 100);
     },
-    savePlantation() {
+    async savePlantation() {
       if(this.$refs.form.validate()) {
         let formData = {};
         let location = { latitude: this.locationData.marker.position.lat, longitude: this.locationData.marker.position.lng };
+        let effiencyIndex = await this.irrigationSystem.findIndex((field) => field.id === 'efficiency');
+        this.irrigationSystem[effiencyIndex].value = this.irrigationSystem[effiencyIndex].value / 100;
         let allData = this.plantingSystem.concat(this.plantingDistance, this.irrigationSystem);
-
-        allData.forEach((question) => {
-          formData[question.id] = question.value;
+        allData.forEach((field) => {
+          formData[field.id] = field.value;
         });
 
         formData.location = location;

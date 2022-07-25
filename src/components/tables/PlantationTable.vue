@@ -5,20 +5,38 @@
     :items="plantations"
     :expanded.sync="expanded"
     show-expand
+    :search="search"
   >
     <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title> {{ "Detalhes de Plantações" }} </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-if="search"
+        <v-row>
+          <v-col cols="12" sm="12" md="6" class="d-none d-md-block">
+            <h3 class="ml-4 mt-4"> {{ "Histórico de Irrigação" }} </h3>
+          </v-col>
+          <v-col cols="12" sm="12" md="6" class="d-md-none text-center">
+            <h3 class="mt-4"> {{ "Histórico de Irrigação" }} </h3>
+          </v-col>
+          <v-col class="d-none d-md-block text-right">
+            <v-spacer class="d-none d-md-block"></v-spacer>
+            <v-btn @click="$emit('openModal')" class="mt-md-3 mr-md-4" rounded color="primary">
+              Cadastra novo plantio
+              <v-icon right> mdi-plus-circle </v-icon>
+            </v-btn>
+          </v-col>
+          <v-col class="d-md-none text-center">
+            <v-btn @click="$emit('openModal')" class="mt-md-3 mr-md-2" rounded color="primary">
+              Cadastra novo plantio
+              <v-icon right> mdi-plus-circle </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      <v-text-field
           v-model="search"
-          append-icon="mdi-magnify"
           label="Procurar"
-          single-line
-          hide-details
+          class="mx-4"
         ></v-text-field>
-      </v-toolbar>
+    </template>
+    <template v-slot:[`item.efficiency`]="{ item }">
+      {{ item.efficiency * 100 }}
     </template>
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon
@@ -78,12 +96,12 @@ export default {
       { text: "Data de Plantio", value: "plantio" },
       { text: "Cultura", value: "culture" },
       { text: "Copa (m²)", value: "copeArea" },
-      { text: "Espaçamento Plantas", value: "betweenPlants" },
-      { text: "Espaçamento Linhas", value: "betweenLines" },
+      { text: "Espaçamento Plantas (m)", value: "betweenPlants" },
+      { text: "Espaçamento Linhas (m)", value: "betweenLines" },
       { text: "Emissores", value: "emissors" },
-      { text: "Vazão (V/h)", value: "flow" },
+      { text: "Vazão (L/h)", value: "flow" },
       { text: "Tipo de Irrigação", value: "irrigationType" },
-      { text: "Eficiência", value: "efficiency" },
+      { text: "Eficiência (%)", value: "efficiency" },
       { text: '', value: 'actions', sortable: false },
     ],
   }),

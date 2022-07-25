@@ -9,20 +9,11 @@
       <v-toolbar flat>
         <v-toolbar-title> {{ "Histórico de Lâminas de Irrigação" }} </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-text-field
-          v-if="search"
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Procurar"
-          single-line
-          hide-details
-        ></v-text-field>
       </v-toolbar>
       <v-text-field
           v-model="search"
           label="Procurar"
-          class="mx-4"
-        ></v-text-field>
+          class="mx-4" />
     </template>
     <template v-slot:[`item.estimative`]="{ item }">
       {{ hoursConverter(item.estimative) }}

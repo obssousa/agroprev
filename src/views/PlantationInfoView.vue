@@ -1,22 +1,9 @@
 <template>
   <v-sheet>
     <v-card class="card-parent d-flex justify-space-between">
-      <PlantationTable :plantations="getPlantations" @editItem="editItem" @deleteItem="openDeleteDialog" :key="tableUpdate" />
+      <PlantationTable :plantations="getPlantations" @editItem="editItem" @deleteItem="openDeleteDialog" @openModal="showCultureForm" :key="tableUpdate" />
       <PlantationForm v-if="showModal" v-model="showModal" :plantation="plantation" @close="forceUpdateTable" />
     </v-card>
-    <v-fab-transition>
-      <v-btn
-        fab
-        large
-        @click="showCultureForm()"
-        color="primary"
-        bottom
-        left
-        class="v-btn--example mr-3"
-      >
-        <v-icon>{{ "mdi-plus" }}</v-icon>
-      </v-btn>
-    </v-fab-transition>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
         <v-card-title>Apagar plantação</v-card-title>
