@@ -47,9 +47,9 @@
           sm="6"
         >
         <v-text-field
-            :value="plantation.efficiency"
+            :value="efficiency"
             readonly
-            label="Eficiência"
+            label="Eficiência (%)"
             outlined
           ></v-text-field>
         </v-col>
@@ -69,6 +69,9 @@ export default {
     plantatioArea() {
       return this.plantation.betweenPlants * this.plantation.betweenLines;
     },
+    efficiency() {
+      return this.plantation.efficiency * 100; 
+    }
   },
 };
 </script>
