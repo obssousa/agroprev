@@ -1,24 +1,20 @@
-# agro
+# Agroprev
 
-## Project setup
+o Agroprev é um sistema desenvolvido na UFPA para auxilio tecnologico de baixo custo na plantação de palma-forrageira.
+
+## Ultima Build do Sistema
+```
+https://salty-journey-12070.herokuapp.com
+```
+
+## Instale o Projeto Local
+Caso deseje instalar o sistema localmente e realizar modificações, rode o comando.
+
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Para rodar localmente execute o comando
 ```
 yarn serve
 ```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
