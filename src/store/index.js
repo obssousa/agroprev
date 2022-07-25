@@ -5,6 +5,7 @@ import Plantations from '@/store/modules/plantations'
 import Info from '@/store/modules/info'
 import Servagro from '@/store/modules/servagro'
 import createPersistedState from "vuex-persistedstate";
+import user from './modules/user'
 // import Cookies from "js-cookie";
 
 Vue.use(Vuex)
@@ -14,7 +15,8 @@ export default new Vuex.Store({
     cultures: Cultures,
     plantations: Plantations,
     info: Info,
-    servagro: Servagro
+    servagro: Servagro,
+    user: user,
   },
   plugins: [createPersistedState()],
 })

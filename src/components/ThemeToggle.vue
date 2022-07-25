@@ -31,6 +31,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "ThemeToggle",
   props: {
@@ -40,8 +41,12 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      saveTheme: "user/saveTheme",
+    }),
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      this.saveTheme(this.$vuetify.theme.dark);
     },
   },
 };

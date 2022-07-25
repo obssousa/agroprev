@@ -17,13 +17,20 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import DesktopNavigation from "@/components/Navigation/DesktopNavigation";
 import MobileNavigation from "@/components/Navigation/MobileNavigation"
 
 export default {
   components: { DesktopNavigation, MobileNavigation },
+  computed: {
+    ...mapGetters("user", ["getTheme"]),
+  },
   name: "App",
 
   data: () => ({ }),
+  created() {
+    this.$vuetify.theme.dark = this.getTheme;
+  }
 };
 </script>
